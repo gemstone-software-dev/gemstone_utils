@@ -7,7 +7,7 @@ name = "emerald_utils"
 version = "0.1.0"
 description = "Crypto utilities, encrypted SQLAlchemy fields, and experimental secret resolvers."
 readme = "README.md"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 authors = [
     { name = "Clinton Bunch" }
 ]
