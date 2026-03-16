@@ -1,18 +1,22 @@
 # SPDX-License-Identifier: MPL-2.0
-# Copyright 2026, Clinton Bunch. All rights reserved
+# Copyright 2026, Clinton Bunch. All rights reserved.
 # emerald_utils/crypto.py
 
 from __future__ import annotations
 
 import os
 from base64 import urlsafe_b64encode, urlsafe_b64decode
+from typing import Optional
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
-def derive_dk_from_passphrase(
+# ---- KEK derivation ---------------------------------------------------------
+
+
+def derive_kek_from_passphrase(
     passphrase: str,
     salt: bytes,
     iterations: int = 200_000,
@@ -31,14 +35,17 @@ def derive_dk_from_passphrase(
     return kdf.derive(passphrase.encode("utf-8"))
 
 
-def aesgcm_encrypt(dk: bytes, plaintext: bytes, aad: bytes | None = None) -> bytes:
+# ---- AES-GCM primitives -----------------------------------------------------
+
+
+def aesgcm_encrypt(dk: bytes, plaintext: bytes, aad: Optional[bytes] = None) -> bytes:
     aesgcm = AESGCM(dk)
     nonce = os.urandom(12)
     ciphertext = aesgcm.encrypt(nonce, plaintext, aad)
     return nonce + ciphertext
 
 
-def aesgcm_decrypt(dk: bytes, blob: bytes, aad: bytes | None = None) -> bytes:
+def aesgcm_decrypt(dk: bytes, blob: bytes, aad: Optional[bytes] = None) -> bytes:
     if len(blob) < 12 + 16:
         raise ValueError("ciphertext blob too short")
 
@@ -46,6 +53,24 @@ def aesgcm_decrypt(dk: bytes, blob: bytes, aad: bytes | None = None) -> bytes:
     ciphertext = blob[12:]
     aesgcm = AESGCM(dk)
     return aesgcm.decrypt(nonce, ciphertext, aad)
+
+
+# ---- JWA-style symmetric dispatch (extensible) ------------------------------
+
+
+def encrypt_with_alg(alg: str, key: bytes, plaintext: bytes) -> bytes:
+    if alg == "A256GCM":
+        return aesgcm_encrypt(key, plaintext)
+    raise ValueError(f"Unsupported symmetric alg: {alg}")
+
+
+def decrypt_with_alg(alg: str, key: bytes, blob: bytes) -> bytes:
+    if alg == "A256GCM":
+        return aesgcm_decrypt(key, blob)
+    raise ValueError(f"Unsupported symmetric alg: {alg}")
+
+
+# ---- Base64 helpers ---------------------------------------------------------
 
 
 def b64encode(data: bytes) -> str:
