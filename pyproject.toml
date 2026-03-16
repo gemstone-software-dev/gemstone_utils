@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emerald_utils"
-version = "0.1.0"
+version = "0.2.0"
 description = "Crypto utilities, encrypted SQLAlchemy fields, and experimental secret resolvers."
 readme = "README.md"
 license-files = ["LICENSE"]
