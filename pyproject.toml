@@ -18,5 +18,11 @@ dependencies = [
     "sqlalchemy>=2.0",
 ]
 
+[project.optional-dependencies]
+azure = [
+    "azure-identity>=1.14",
+    "azure-keyvault-secrets>=4.7",
+]
+
 [project.urls]
 Homepage = "https://github.com/cdbunch72/emerald_utils"
