@@ -5,12 +5,12 @@
 from __future__ import annotations
 
 from sqlalchemy import Column, String, Text
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy.orm import Session
 
-Base = declarative_base()
+from ..db import EmeraldDB
 
 
-class SecretKV(Base):
+class SecretKV(EmeraldDB):
     __tablename__ = "emerald_secret_kv"
 
     key = Column(String(255), primary_key=True)
