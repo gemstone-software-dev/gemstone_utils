@@ -34,8 +34,7 @@ Supports:
 - `env:` — environment variables (cached + scrubbed)
 - `file:` — read from filesystem
 - `secret:` — systemd / container secret directories
-- `sqlexp:` — minimal SQL key/value store (requires a SQLAlchemy `session`)
-- `azexp:` — Azure Key Vault secret URI (optional extra: `pip install 'emerald_utils[azure]'`)
+- pluggable backends (`sqlexp:`, `azexp:`) enabled by explicitly importing plugin modules
 - `$A256GCM$keyid$base64` encrypted values (requires `secrets_resolver.set_keyctx_resolver`)
 
 Not intended to be the final vault/meta‑manager.
@@ -114,6 +113,7 @@ class OAuthToken(Base):
 ```python
 from pydantic import BaseModel, field_validator
 from emerald_utils.experimental.secrets_resolver import resolve_secret
+from emerald_utils.experimental import sqlexp_backend  # enables sqlexp:
 
 class Config(BaseModel):
     api_token: str
@@ -121,10 +121,10 @@ class Config(BaseModel):
     @field_validator("api_token", mode="before")
     @classmethod
     def load_secret(cls, v):
-        return resolve_secret(v, session=db_session)
+        return resolve_secret(v)
 ```
 
-Use `session=...` when values may use the `sqlexp:` prefix; omit it for `env:`, `file:`, `secret:`, `azexp:`, literals, and encrypted-field strings (those use `secrets_resolver.set_keyctx_resolver`, not the SQL session).
+`sqlexp:` uses `emerald_utils.db.get_session()` internally. Call `init_db(...)` before resolving `sqlexp:` values.
 
 Config example:
 
@@ -149,10 +149,15 @@ Searches:
 - `/var/run/secrets/name`
 
 ### `sqlexp:key`
-Reads from the experimental SQL key/value store. Requires passing `session` into `resolve_secret`.
+Reads from the experimental SQL key/value store. Enabled by importing
+`emerald_utils.experimental.sqlexp_backend` (or calling its `enable()`).
+Uses `emerald_utils.db.get_session()` internally.
 
 ### `azexp:https://vault.vault.azure.net/secrets/name`
-Fetches from Azure Key Vault. Install `emerald_utils[azure]` and authenticate with `DefaultAzureCredential` (or `secrets_resolver.set_azexp_credential`).
+Fetches from Azure Key Vault. Enabled by importing
+`emerald_utils.experimental.azexp_backend` (or calling its `enable()`).
+Install `emerald_utils[azure]` and authenticate with `DefaultAzureCredential`.
+Use `azexp_backend.set_azexp_credential(...)` to override credentials.
 
 ### `$A256GCM$keyid$base64`
 Automatically decrypted using `secrets_resolver.set_keyctx_resolver` (separate from `EncryptedString.set_keyctx_resolver`).
