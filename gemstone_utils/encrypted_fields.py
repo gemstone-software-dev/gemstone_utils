@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch. All rights reserved.
-# emerald_utils/encrypted_fields.py
+# gemstone_utils/encrypted_fields.py
 
 from __future__ import annotations
 

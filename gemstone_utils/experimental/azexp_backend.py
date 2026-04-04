@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch
-# emerald_utils/experimental/azexp_backend.py
+# gemstone_utils/experimental/azexp_backend.py
 
 from __future__ import annotations
 
@@ -54,7 +54,7 @@ def _azure_default_credential():
         credential_cls = getattr(identity_mod, "DefaultAzureCredential")
     except Exception as e:
         raise RuntimeError(
-            "azexp: install Azure extras: pip install 'emerald_utils[azure]'"
+            "azexp: install Azure extras: pip install 'gemstone_utils[azure]'"
         ) from e
     return credential_cls()
 
@@ -68,7 +68,7 @@ def _secret_client_for_vault(vault_url: str):
         secret_client_cls = getattr(secrets_mod, "SecretClient")
     except Exception as e:
         raise RuntimeError(
-            "azexp: install Azure extras: pip install 'emerald_utils[azure]'"
+            "azexp: install Azure extras: pip install 'gemstone_utils[azure]'"
         ) from e
 
     cred = _azexp_credential if _azexp_credential is not None else _azure_default_credential()

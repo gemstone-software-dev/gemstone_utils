@@ -1,6 +1,6 @@
-# emerald_utils
+# gemstone_utils
 
-**emerald_utils** provides a small, stable core of cryptographic helpers, transparent AES‑GCM encrypted SQLAlchemy fields, and a minimal experimental secrets resolver suitable for Pydantic’s `BeforeValidator`. It is designed for applications that need reversible secret storage with minimal plaintext exposure and predictable operational behavior.
+**gemstone_utils** provides a small, stable core of cryptographic helpers, transparent AES‑GCM encrypted SQLAlchemy fields, and a minimal experimental secrets resolver suitable for Pydantic’s `BeforeValidator`. It is designed for applications that need reversible secret storage with minimal plaintext exposure and predictable operational behavior.
 
 The package is licensed under the **MPL‑2.0**, allowing use in both open‑source and proprietary projects while keeping modifications to this library itself open.
 
@@ -16,8 +16,8 @@ The package is licensed under the **MPL‑2.0**, allowing use in both open‑sou
 
 ### 🧩 Encrypted fields
 - `$A256GCM$keyid$base64` encrypted‑field format
-- `KeyContext` (`keyid`, `key`, `alg`) in `emerald_utils.types`
-- `encrypt_string()` and `decrypt_string()` helpers in `emerald_utils.encrypted_fields`
+- `KeyContext` (`keyid`, `key`, `alg`) in `gemstone_utils.types`
+- `encrypt_string()` and `decrypt_string()` helpers in `gemstone_utils.encrypted_fields`
 
 ### 🗄️ SQLAlchemy integration
 - `EncryptedString` TypeDecorator
@@ -50,19 +50,19 @@ Not intended to be the final vault/meta‑manager.
 ## Installation
 
 ```
-pip install emerald_utils
+pip install gemstone_utils
 ```
 
 With Azure Key Vault support:
 
 ```
-pip install 'emerald_utils[azure]'
+pip install 'gemstone_utils[azure]'
 ```
 
 Or from a source tarball:
 
 ```
-pip install emerald_utils-0.2.0.tar.gz
+pip install gemstone_utils-0.2.0.tar.gz
 ```
 
 ---
@@ -72,10 +72,10 @@ pip install emerald_utils-0.2.0.tar.gz
 ### 1. Derive a data key and wire `EncryptedString`
 
 ```python
-from emerald_utils.crypto import derive_kek_from_passphrase
-from emerald_utils.types import KeyContext
-from emerald_utils.sqlalchemy.encrypted_type import EncryptedString
-from emerald_utils.experimental.secrets_resolver import resolve_secret
+from gemstone_utils.crypto import derive_kek_from_passphrase
+from gemstone_utils.types import KeyContext
+from gemstone_utils.sqlalchemy.encrypted_type import EncryptedString
+from gemstone_utils.experimental.secrets_resolver import resolve_secret
 
 passphrase = resolve_secret("env:APP_DK_PASSPHRASE")
 salt = resolve_secret("env:APP_DK_SALT").encode("utf-8")
@@ -99,7 +99,7 @@ EncryptedString.set_keyctx_resolver(resolve_enc_keyctx)
 
 ```python
 from sqlalchemy import Column, Integer
-from emerald_utils.sqlalchemy.encrypted_type import EncryptedString
+from gemstone_utils.sqlalchemy.encrypted_type import EncryptedString
 
 class OAuthToken(Base):
     __tablename__ = "oauth_tokens"
@@ -112,8 +112,8 @@ class OAuthToken(Base):
 
 ```python
 from pydantic import BaseModel, field_validator
-from emerald_utils.experimental.secrets_resolver import resolve_secret
-from emerald_utils.experimental import sqlexp_backend  # enables sqlexp:
+from gemstone_utils.experimental.secrets_resolver import resolve_secret
+from gemstone_utils.experimental import sqlexp_backend  # enables sqlexp:
 
 class Config(BaseModel):
     api_token: str
@@ -124,7 +124,7 @@ class Config(BaseModel):
         return resolve_secret(v)
 ```
 
-`sqlexp:` uses `emerald_utils.db.get_session()` internally. Call `init_db(...)` before resolving `sqlexp:` values.
+`sqlexp:` uses `gemstone_utils.db.get_session()` internally. Call `init_db(...)` before resolving `sqlexp:` values.
 
 Config example:
 
@@ -150,13 +150,13 @@ Searches:
 
 ### `sqlexp:key`
 Reads from the experimental SQL key/value store. Enabled by importing
-`emerald_utils.experimental.sqlexp_backend` (or calling its `enable()`).
-Uses `emerald_utils.db.get_session()` internally.
+`gemstone_utils.experimental.sqlexp_backend` (or calling its `enable()`).
+Uses `gemstone_utils.db.get_session()` internally.
 
 ### `azexp:https://vault.vault.azure.net/secrets/name`
 Fetches from Azure Key Vault. Enabled by importing
-`emerald_utils.experimental.azexp_backend` (or calling its `enable()`).
-Install `emerald_utils[azure]` and authenticate with `DefaultAzureCredential`.
+`gemstone_utils.experimental.azexp_backend` (or calling its `enable()`).
+Install `gemstone_utils[azure]` and authenticate with `DefaultAzureCredential`.
 Use `azexp_backend.set_azexp_credential(...)` to override credentials.
 
 ### `$A256GCM$keyid$base64`
@@ -168,10 +168,10 @@ Automatically decrypted using `secrets_resolver.set_keyctx_resolver` (separate f
 
 The following modules are intentionally minimal and **will not** be part of the future vault/meta‑manager:
 
-- `emerald_utils.experimental.secrets_resolver`
-- `emerald_utils.experimental.sqlexp`
+- `gemstone_utils.experimental.secrets_resolver`
+- `gemstone_utils.experimental.sqlexp`
 
-They exist to support early projects (EmeraldOps, Thaum, WebexCalling bridge) without constraining the design of the full resolver.
+They exist to support early projects (GemstoneOps, Thaum, WebexCalling bridge) without constraining the design of the full resolver.
 
 ---
 

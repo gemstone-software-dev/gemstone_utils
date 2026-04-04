@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "emerald_utils"
-version = "0.2.0"
+name = "gemstone_utils"
+version = "0.2.1"
 description = "Crypto utilities, encrypted SQLAlchemy fields, and experimental secret resolvers."
 readme = "README.md"
 license-files = ["LICENSE"]
@@ -25,4 +25,4 @@ azure = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/cdbunch72/emerald_utils"
+Homepage = "https://github.com/cdbunch72/gemstone_utils"

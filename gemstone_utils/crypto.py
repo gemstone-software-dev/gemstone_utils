@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch. All rights reserved.
-# emerald_utils/crypto.py
+# gemstone_utils/crypto.py
 
 from __future__ import annotations
 

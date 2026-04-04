@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MPL-2.0
-# emerald_utils/types.py
+# gemstone_utils/types.py
 
 from __future__ import annotations
 from dataclasses import dataclass

@@ -1,17 +1,17 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch. All rights reserved.
-# emerald_utils/experimental/sqlexp.py
+# gemstone_utils/experimental/sqlexp.py
 
 from __future__ import annotations
 
 from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import Session
 
-from ..db import EmeraldDB
+from ..db import GemstoneDB
 
 
-class SecretKV(EmeraldDB):
-    __tablename__ = "emerald_secret_kv"
+class SecretKV(GemstoneDB):
+    __tablename__ = "gemstone_secret_kv"
 
     key = Column(String(255), primary_key=True)
     value = Column(Text, nullable=False)

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch. All rights reserved.
-# emerald_utils/sqlalchemy/lazy_secret.py
+# gemstone_utils/sqlalchemy/lazy_secret.py
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ class LazySecret:
 
     def _decrypt(self):
         if self._plaintext is None:
-            from emerald_utils.encrypted_fields import decrypt_string
+            from gemstone_utils.encrypted_fields import decrypt_string
             self._plaintext = decrypt_string(self._encrypted, self._keyctx)
         return self._plaintext
 

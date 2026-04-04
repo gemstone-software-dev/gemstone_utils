@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: MPL-2.0
-# emerald_utils/key_mgmt.py
+# gemstone_utils/key_mgmt.py
 
 from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Optional, Iterable, Callable, Dict, Any
 
-from emerald_utils.experimental.secrets_resolver import resolve_secret
+from gemstone_utils.experimental.secrets_resolver import resolve_secret
 from .types import KeyRecord, KeyContext
 from .crypto import encrypt_with_alg, decrypt_with_alg
 

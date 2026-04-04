@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch. All rights reserved.
-# emerald_utils/sqlalchemy/encrypted_type.py
+# gemstone_utils/sqlalchemy/encrypted_type.py
 
 from __future__ import annotations
 
@@ -8,12 +8,12 @@ from typing import Callable, Optional
 
 from sqlalchemy.types import TypeDecorator, Text
 
-from emerald_utils.encrypted_fields import (
+from gemstone_utils.encrypted_fields import (
     encrypt_string,
     is_encrypted_prefix,
     parse_encrypted_field,
 )
-from emerald_utils.types import KeyContext
+from gemstone_utils.types import KeyContext
 from .lazy_secret import LazySecret
 
 

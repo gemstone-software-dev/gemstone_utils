@@ -1,18 +1,18 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026,
-# emerald_utils/experimental/secrets_resolver.py
+# gemstone_utils/experimental/secrets_resolver.py
 
 from __future__ import annotations
 
 import os
 from typing import Callable, Optional
 
-from emerald_utils.encrypted_fields import (
+from gemstone_utils.encrypted_fields import (
     decrypt_string,
     is_encrypted_prefix,
     parse_encrypted_field,
 )
-from emerald_utils.types import KeyContext
+from gemstone_utils.types import KeyContext
 
 
 # ---------------------------------------------------------------------------

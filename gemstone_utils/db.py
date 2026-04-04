@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026,
-# emerald_utils/db.py
+# gemstone_utils/db.py
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 
-class EmeraldDB(DeclarativeBase):
-    """Shared declarative base for emerald_utils ORM models."""
+class GemstoneDB(DeclarativeBase):
+    """Shared declarative base for gemstone_utils ORM models."""
 
 
 _engine: Optional[Engine] = None
@@ -75,8 +75,8 @@ def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
     """
     Configure the process-global SQLAlchemy engine and session factory, then
     create any missing tables for all models registered on
-    :attr:`EmeraldDB.metadata` (call after every plugin/module that defines
-    ``EmeraldDB`` subclasses has been imported).
+    :attr:`GemstoneDB.metadata` (call after every plugin/module that defines
+    ``GemstoneDB`` subclasses has been imported).
 
     Applies light dialect-specific defaults (SQLite WAL and pragmas; MySQL /
     MariaDB utf8mb4 + pool tuning; PostgreSQL UTC session timezone + pool
@@ -103,7 +103,7 @@ def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
         expire_on_commit=False,
         class_=Session,
     )
-    EmeraldDB.metadata.create_all(bind=_engine)
+    GemstoneDB.metadata.create_all(bind=_engine)
     return _engine
 
 

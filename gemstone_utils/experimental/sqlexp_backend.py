@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026,
-# emerald_utils/experimental/sqlexp_backend.py
+# gemstone_utils/experimental/sqlexp_backend.py
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ def resolve_sqlexp(logical_key: str) -> str | None:
     """
     Resolve sqlexp:<logical_key> from the SQL key/value store.
 
-    Requires emerald_utils.db.init_db(...) to have been called.
+    Requires gemstone_utils.db.init_db(...) to have been called.
     """
     with get_session() as session:
         return get_secret(session, logical_key)

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026,
-# emerald_utils/election.py
+# gemstone_utils/election.py
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from sqlalchemy import DateTime, String, delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
-from .db import EmeraldDB, get_session
+from .db import GemstoneDB, get_session
 
 
 def _utcnow() -> datetime:
@@ -40,8 +40,8 @@ def set_expire(sec: int) -> None:
     _expire_seconds = sec
 
 
-class ElectionCandidate(EmeraldDB):
-    __tablename__ = "emerald_election_candidate"
+class ElectionCandidate(GemstoneDB):
+    __tablename__ = "gemstone_election_candidate"
 
     ns: Mapped[str] = mapped_column(String(255), primary_key=True)
     candidate_id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -50,8 +50,8 @@ class ElectionCandidate(EmeraldDB):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
-class ElectionLeader(EmeraldDB):
-    __tablename__ = "emerald_election_leader"
+class ElectionLeader(GemstoneDB):
+    __tablename__ = "gemstone_election_leader"
 
     ns: Mapped[str] = mapped_column(String(255), primary_key=True)
 
