@@ -5,9 +5,12 @@ import pytest
 
 from gemstone_utils.encrypted_fields import decrypt_string, encrypt_string
 from gemstone_utils.crypto import (
+    RECOMMENDED_DATA_ALG,
+    SUPPORTED_SYM_ALGS,
     decrypt_alg,
     encrypt_alg,
     generate_key_by_alg,
+    recommended_data_alg,
     sym_alg_key_length,
 )
 from gemstone_utils.types import KeyContext
@@ -38,7 +41,12 @@ def test_unknown_alg_generate_raises():
 
 
 def test_encrypt_string_roundtrip_field_format():
-    key = generate_key_by_alg("A256GCM")
-    ctx = KeyContext(keyid=1, key=key, alg="A256GCM")
+    key = generate_key_by_alg(recommended_data_alg())
+    ctx = KeyContext(keyid=1, key=key)
     wire = encrypt_string("hello", ctx)
     assert decrypt_string(wire, ctx) == "hello"
+
+
+def test_recommended_data_alg_matches_registry():
+    assert recommended_data_alg() == RECOMMENDED_DATA_ALG
+    assert recommended_data_alg() in SUPPORTED_SYM_ALGS

@@ -6,6 +6,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict
 
+from gemstone_utils.crypto import recommended_data_alg
+
 
 @dataclass
 class KeyRecord:
@@ -28,4 +30,4 @@ class KeyContext:
     """
     keyid: int
     key: bytes
-    alg: str = "A256GCM"
+    alg: str = field(default_factory=recommended_data_alg)

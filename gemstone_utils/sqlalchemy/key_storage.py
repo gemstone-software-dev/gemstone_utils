@@ -12,7 +12,7 @@ from typing import Callable, Iterable, Iterator, Optional
 from sqlalchemy import Boolean, Column, DateTime, Integer, Select, Text, select, update
 from sqlalchemy.orm import Session
 
-from gemstone_utils.crypto import encrypt_alg, is_supported_sym_alg
+from gemstone_utils.crypto import RECOMMENDED_DATA_ALG, encrypt_alg, is_supported_sym_alg
 from gemstone_utils.db import GemstoneDB, get_session as default_get_session
 from gemstone_utils.encrypted_fields import format_encrypted_field, parse_encrypted_field
 from gemstone_utils.key_mgmt import (
@@ -56,7 +56,7 @@ class GemstoneKeyRecord(GemstoneDB):
 
     key_id = Column(Integer, primary_key=True)
     wrapped = Column(Text, nullable=False)
-    data_alg = Column(Text, nullable=False, default="A256GCM")
+    data_alg = Column(Text, nullable=False, default=RECOMMENDED_DATA_ALG)
     is_active = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), nullable=False)
     updated_at = Column(DateTime(timezone=True), nullable=False)
@@ -154,7 +154,7 @@ def put_keyrecord(
     *,
     key_id: int,
     wrapped: str,
-    data_alg: str = "A256GCM",
+    data_alg: str = RECOMMENDED_DATA_ALG,
     is_active: bool = False,
 ) -> None:
     """
@@ -162,6 +162,9 @@ def put_keyrecord(
 
     Raises if ``key_id`` already exists. When ``is_active`` is True for a DEK
     (``key_id >= 1``), clears ``is_active`` on all other DEK rows in this session.
+
+    ``data_alg`` defaults to :func:`~gemstone_utils.crypto.recommended_data_alg`
+    (same as :data:`~gemstone_utils.crypto.RECOMMENDED_DATA_ALG`).
     """
     if not is_supported_sym_alg(data_alg):
         raise ValueError(f"Unsupported symmetric alg for data_alg: {data_alg!r}")

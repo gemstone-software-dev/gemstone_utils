@@ -34,6 +34,8 @@ Development toward **v0.3.0**. This entry is updated incrementally until the sta
 
 - **`parse_encrypted_field(value)`** now returns a **4-tuple** `(alg_id, keyid, params, blob)` where `params` is a `dict` (empty for legacy four-part values).
 - **Breaking — `gemstone_utils.crypto`:** **`SYM_ALG_REGISTRY`**, **`SUPPORTED_SYM_ALGS`**, **`is_supported_sym_alg`**, **`sym_alg_key_length`**, **`generate_key_by_alg`**, **`encrypt_alg`**, **`decrypt_alg`**. **`encrypt_alg`** returns **`(ciphertext, updated_params)`**; callers persist `updated_params` in the wire JSON segment when needed. **`encrypt_with_alg` / `decrypt_with_alg`** remain as thin helpers (ciphertext-only encrypt; empty params decrypt).
+- **`RECOMMENDED_DATA_ALG`** and **`recommended_data_alg()`** — library default symmetric algorithm id for **field** encryption (aligned with **`KeyContext.alg`** default and **`put_keyrecord(..., data_alg=...)`** default).
+- **`KeyContext.alg`** default is **`field(default_factory=recommended_data_alg)`** (still **`A256GCM`** while that remains the recommended id).
 - **Breaking — `format_encrypted_field`:** signature is **`(alg, keyid, blob, params=None)`** (algorithm id first). Previously the first argument was `keyid` and the algorithm was hardcoded to `A256GCM`.
 - **Breaking — `KeyRecord`:** adds **`params`** (`dict`, default `{}`) for the wire params segment; **`unwrap_key` / `verify_kek` / `wrap_key`** pass it through to **`decrypt_alg` / `encrypt_alg`**.
 - **Breaking — `gemstone_utils.sqlalchemy.key_storage`:** **`GemstoneKeyRecord`** adds **`data_alg`**, **`is_active`**, **`created_at`**, **`updated_at`**; **`GemstoneKeyKdf`** adds **`created_at`**, **`updated_at`**. **`put_keyrecord`** is the supported insert API; **`put_wrapped_batch`** removed. **`set_kdf_params`** and **`rewrap_key_records`** maintain timestamps. **`make_keyctx_resolver`** sets **`KeyContext.alg`** from **`row.data_alg`**. Existing databases require **`ALTER TABLE`** (or recreate); there is no Alembic bundle in this repo.
@@ -56,7 +58,7 @@ Unchanged from v0.2.1 unless noted later in this section.
 
 - **`gemstone_utils.sqlalchemy.key_storage`:** Models `GemstoneKeyKdf` and `GemstoneKeyRecord` (tables `gemstone_key_kdf`, `gemstone_key_record`). Logical `key_id` **0** is the KEK canary; **1+** are DEKs. The wire segment `keyid` identifies the KEK slot (KDF row), not the DEK’s primary key.
 - **Helpers:** `new_kdf_params` (wrapper around `recommended_kdf_params`), `wire_wrap`, `wire_to_keyrecord`, `keyrecord_to_wire`, `unwrap_stored_key`, `set_kdf_params` / `get_kdf_params`, `put_keyrecord`, `rewrap_key_records`, `make_keyctx_resolver`.
-- **`crypto`:** `derive_pbkdf2_hmac_sha256` (low-level primitive), `DEFAULT_PBKDF2_ITERATIONS_STRONG`, and symmetric registry / `encrypt_alg` / `generate_key_by_alg` as above.
+- **`crypto`:** `derive_pbkdf2_hmac_sha256` (low-level primitive), `DEFAULT_PBKDF2_ITERATIONS_STRONG`, symmetric registry / `encrypt_alg` / `generate_key_by_alg`, and **`recommended_data_alg()`** / **`RECOMMENDED_DATA_ALG`** as above.
 
 ### Development
 

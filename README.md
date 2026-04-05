@@ -10,6 +10,7 @@ The package is licensed under the **MPL‑2.0**, allowing use in both open‑sou
 
 ### 🔐 Cryptography core
 - Registered symmetric algorithms (`SYM_ALG_REGISTRY`, `SUPPORTED_SYM_ALGS`) with **`encrypt_alg` / `decrypt_alg`** (optional per‑algorithm params; encrypt returns **`(ciphertext, updated_params)`**)
+- **`recommended_data_alg()`** / **`RECOMMENDED_DATA_ALG`** — library default field algorithm id (avoids hardcoding in apps)
 - **`generate_key_by_alg(alg)`** for DEK-sized random bytes from the registry
 - PBKDF2‑HMAC‑SHA256 key derivation (no extra dependencies)
 - URL‑safe base64 encoding helpers
@@ -123,7 +124,7 @@ EncryptedString.set_keyctx_resolver(resolve_enc_keyctx)
 
 ```python
 import gemstone_utils.sqlalchemy.key_storage  # registers ORM tables on GemstoneDB
-from gemstone_utils.crypto import generate_key_by_alg
+from gemstone_utils.crypto import generate_key_by_alg, recommended_data_alg
 from gemstone_utils.db import get_session, init_db
 from gemstone_utils.key_mgmt import derive_kek, init as key_mgmt_init, make_kek_check_record
 from gemstone_utils.sqlalchemy.encrypted_type import EncryptedString
@@ -143,8 +144,8 @@ key_mgmt_init("vault_passphrase", b"constant-canary-bytes", env_allowed=True)
 passphrase = "human vault passphrase"
 kdf = new_kdf_params()
 kek = derive_kek(passphrase, kdf)
-dek_material = generate_key_by_alg("A256GCM")
-dek = KeyContext(keyid=1, key=dek_material, alg="A256GCM")
+dek_material = generate_key_by_alg(recommended_data_alg())
+dek = KeyContext(keyid=1, key=dek_material)
 
 with get_session() as session:
     with session.begin():
@@ -153,14 +154,12 @@ with get_session() as session:
             session,
             key_id=0,
             wrapped=keyrecord_to_wire(make_kek_check_record(kek), 1),
-            data_alg="A256GCM",
             is_active=False,
         )
         put_keyrecord(
             session,
             key_id=1,
             wrapped=wire_wrap(1, kek, dek.key),
-            data_alg="A256GCM",
             is_active=True,
         )
 

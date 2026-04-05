@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 from base64 import urlsafe_b64encode, urlsafe_b64decode
-from typing import Any, Callable, Dict, Mapping, NamedTuple, Optional, Tuple
+from typing import Any, Callable, Dict, Final, Mapping, NamedTuple, Optional, Tuple
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -100,6 +100,9 @@ SYM_ALG_REGISTRY: Dict[str, SymAlgSpec] = {
     ),
 }
 
+RECOMMENDED_DATA_ALG: Final[str] = "A256GCM"
+assert RECOMMENDED_DATA_ALG in SYM_ALG_REGISTRY
+
 SUPPORTED_SYM_ALGS: frozenset[str] = frozenset(SYM_ALG_REGISTRY.keys())
 
 
@@ -112,6 +115,16 @@ def sym_alg_key_length(alg: str) -> int:
     if spec is None:
         raise ValueError(f"Unsupported symmetric alg: {alg}")
     return spec.key_length
+
+
+def recommended_data_alg() -> str:
+    """
+    Symmetric algorithm id recommended for **new** application field encryption.
+
+    Matches the default for :attr:`~gemstone_utils.types.KeyContext.alg` and
+    persisted :attr:`~gemstone_utils.sqlalchemy.key_storage.GemstoneKeyRecord.data_alg`.
+    """
+    return RECOMMENDED_DATA_ALG
 
 
 def generate_key_by_alg(alg: str) -> bytes:

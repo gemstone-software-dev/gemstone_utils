@@ -8,7 +8,11 @@ import os
 import pytest
 
 import gemstone_utils.sqlalchemy.key_storage  # noqa: F401 — register ORM models
-from gemstone_utils.crypto import DEFAULT_PBKDF2_ITERATIONS_STRONG, sym_alg_key_length
+from gemstone_utils.crypto import (
+    DEFAULT_PBKDF2_ITERATIONS_STRONG,
+    recommended_data_alg,
+    sym_alg_key_length,
+)
 from gemstone_utils.db import get_session, init_db
 from gemstone_utils.key_mgmt import (
     derive_and_verify_kek,
@@ -58,18 +62,14 @@ def bootstrapped(db_url, passphrase):
     kdf_params = _fast_kdf_params()
     kek = derive_kek(passphrase, kdf_params)
     canary = make_kek_check_record(kek)
-    dek = os.urandom(sym_alg_key_length("A256GCM"))
+    dek = os.urandom(sym_alg_key_length(recommended_data_alg()))
     w0 = keyrecord_to_wire(canary, 1)
     w1 = wire_wrap(1, kek, dek)
     with get_session() as session:
         with session.begin():
             set_kdf_params(session, 1, kdf_params)
-            put_keyrecord(
-                session, key_id=0, wrapped=w0, data_alg="A256GCM", is_active=False
-            )
-            put_keyrecord(
-                session, key_id=1, wrapped=w1, data_alg="A256GCM", is_active=True
-            )
+            put_keyrecord(session, key_id=0, wrapped=w0, is_active=False)
+            put_keyrecord(session, key_id=1, wrapped=w1, is_active=True)
     return {"passphrase": passphrase, "kdf_params": kdf_params, "kek": kek, "dek": dek}
 
 
@@ -182,7 +182,6 @@ def test_put_keyrecord_duplicate_raises(bootstrapped):
                     session,
                     key_id=1,
                     wrapped="dummy",
-                    data_alg="A256GCM",
                     is_active=False,
                 )
 
@@ -208,11 +207,11 @@ def test_keyctx_resolver(bootstrapped):
     ctx = resolve(1)
     assert ctx.keyid == 1
     assert ctx.key == dek
-    assert ctx.alg == "A256GCM"
+    assert ctx.alg == recommended_data_alg()
 
     with get_session() as session:
         row = session.get(GemstoneKeyRecord, 1)
-        assert ctx.alg == row.data_alg
+        assert ctx.alg == row.data_alg == recommended_data_alg()
 
 
 def test_keyctx_resolver_rejects_zero():
