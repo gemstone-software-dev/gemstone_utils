@@ -27,10 +27,15 @@ The package is licensed under the **MPL‑2.0**, allowing use in both open‑sou
 - `EncryptedString.set_current_keyctx()` for the active write key
 - `EncryptedString.set_keyctx_resolver()` to map `keyid` from stored ciphertext to a `KeyContext` on read
 
+### 🔐 Key management (`key_mgmt`)
+- **`derive_kek(passphrase, params)`** plus a pluggable **`register_kdf`** registry; params JSON is the source of truth for which algorithm runs.
+- **`recommended_kdf_params()`** — library default for *new* KDF rows (today: PBKDF2‑HMAC‑SHA256 with strong iteration count and random salt).
+- **`gemstone_utils.key_mgmt.kdf`** — documented contract (`RecommendedKdfParamsFn`, `HasKdfRegistryName`) and per‑algorithm modules (e.g. **`kdf.pbkdf2`**: `NAME`, `pbkdf2_params`, `recommended_pbkdf2_params`) when you pin a specific algorithm instead of the default.
+
 ### 🔑 SQL key storage (`sqlalchemy.key_storage`)
 - Tables `gemstone_key_kdf` (persisted KDF JSON per KEK slot) and `gemstone_key_record` (wrapped keys in the same five‑part wire format as encrypted columns)
 - Logical `key_id` **0** holds the KEK **canary**; **1+** hold **DEKs** referenced by `EncryptedString` ciphertexts. The **segment** `keyid` inside each wire string is the KEK slot (foreign meaning: row in `gemstone_key_kdf`), not the DEK’s logical id.
-- Built‑in KDF: `pbkdf2-hmac-sha256` (cryptography’s `PBKDF2HMAC`), with strong defaults when `iterations` / `length` are omitted; **`salt` must always be stored** in JSON (use `new_pbkdf2_kdf_params()` at bootstrap).
+- Bootstrap persisted KDF rows with **`new_kdf_params()`** (alias of **`recommended_kdf_params`**) or your own params dict; **`salt` must always be stored** in JSON for PBKDF2 rows.
 - `make_keyctx_resolver()` wires `EncryptedString.set_keyctx_resolver()` to `get_session()` + persisted rows + `derive_kek` / `load_keyctx`.
 - `rewrap_key_records()` performs `rotate_kek`‑style batch re‑wrap inside a transaction you open with `with session.begin(): ...`.
 
@@ -87,7 +92,8 @@ pip install gemstone_utils-0.2.0.tar.gz
 ### 1. Derive a data key and wire `EncryptedString`
 
 ```python
-from gemstone_utils.key_mgmt import derive_kek, pbkdf2_hmac_sha256_params
+from gemstone_utils.key_mgmt import derive_kek, recommended_kdf_params
+from gemstone_utils.key_mgmt.kdf.pbkdf2 import pbkdf2_params
 from gemstone_utils.types import KeyContext
 from gemstone_utils.sqlalchemy.encrypted_type import EncryptedString
 from gemstone_utils.experimental.secrets_resolver import resolve_secret
@@ -95,7 +101,8 @@ from gemstone_utils.experimental.secrets_resolver import resolve_secret
 passphrase = resolve_secret("env:APP_DK_PASSPHRASE")
 salt = resolve_secret("env:APP_DK_SALT").encode("utf-8")
 
-dk = derive_kek(passphrase, pbkdf2_hmac_sha256_params(salt))
+dk = derive_kek(passphrase, pbkdf2_params(salt))
+# or: derive_kek(passphrase, recommended_kdf_params(salt))
 ctx = KeyContext(keyid=1, key=dk)
 
 EncryptedString.set_current_keyctx(ctx)
@@ -123,7 +130,7 @@ from gemstone_utils.sqlalchemy.key_storage import (
     GemstoneKeyRecord,
     keyrecord_to_wire,
     make_keyctx_resolver,
-    new_pbkdf2_kdf_params,
+    new_kdf_params,
     set_kdf_params,
     wire_wrap,
 )
@@ -133,7 +140,7 @@ init_db("sqlite:///./app.db")
 key_mgmt_init("vault_passphrase", b"constant-canary-bytes", env_allowed=True)
 
 passphrase = "human vault passphrase"
-kdf = new_pbkdf2_kdf_params()
+kdf = new_kdf_params()
 kek = derive_kek(passphrase, kdf)
 dek = KeyContext(keyid=1, key=os.urandom(32))
 

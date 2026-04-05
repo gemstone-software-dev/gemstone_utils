@@ -38,13 +38,20 @@ Development toward **v0.3.0**. This entry is updated incrementally until the sta
 
 Unchanged from v0.2.1 unless noted later in this section.
 
+### `key_mgmt` package and KDF registry
+
+- **Breaking:** `gemstone_utils.key_mgmt` is now a **package** (`key_mgmt/__init__.py`, `key_mgmt/registry.py`, `key_mgmt/kdf/…`). Imports like `from gemstone_utils.key_mgmt import derive_kek` still work.
+- **Registry:** `register_kdf` and `derive_kek(passphrase, params)` live in `key_mgmt.registry` and are re-exported from `gemstone_utils.key_mgmt`.
+- **`recommended_kdf_params(salt=None)`** — single entry point for the library’s *current* recommended KDF params (today delegates to `key_mgmt.kdf.pbkdf2.recommended_pbkdf2_params`).
+- **`gemstone_utils.key_mgmt.kdf`:** `RecommendedKdfParamsFn` and `HasKdfRegistryName` protocols plus a package docstring describing the contract for algorithm submodules (`NAME`, `recommended_<algo>_params`, optional explicit params builder).
+- **`gemstone_utils.key_mgmt.kdf.pbkdf2`:** `NAME` (`pbkdf2-hmac-sha256`), `pbkdf2_params`, `recommended_pbkdf2_params`, and the registered derive implementation (cryptography `PBKDF2HMAC`). Persisted JSON must include **`salt`** (url-safe base64); **`iterations`** / **`length`** default when omitted (currently **600_000** iterations and **32** bytes for SHA-256).
+- **Removed from `key_mgmt` root:** `pbkdf2_hmac_sha256_params`, `KDF_NAME_PBKDF2_HMAC_SHA256`, `DEFAULT_PBKDF2_DERIVED_KEY_LENGTH` — use `kdf.pbkdf2` instead.
+
 ### SQL key storage and KDF defaults
 
-- **`gemstone_utils.sqlalchemy.key_storage`:** SQLAlchemy models `GemstoneKeyKdf` and `GemstoneKeyRecord` (tables `gemstone_key_kdf`, `gemstone_key_record`) for persisted KDF parameters and wrapped keys using the same five‑part encrypted‑field wire format. Logical `key_id` **0** is the KEK canary; **1+** are DEKs. The wire segment `keyid` identifies the KEK slot (KDF row), not the DEK’s primary key.
-- **Helpers:** `new_pbkdf2_kdf_params`, `wire_wrap`, `wire_to_keyrecord`, `keyrecord_to_wire`, `unwrap_stored_key`, `set_kdf_params` / `get_kdf_params`, `rewrap_key_records` (batch re‑wrap via `rotate_kek`, caller uses `session.begin()`), `make_keyctx_resolver` for `EncryptedString.set_keyctx_resolver` (optional in‑process LRU via `max_cache_size`).
-- **`key_mgmt`:** Registered built‑in KDF **`pbkdf2-hmac-sha256`** (`KDF_NAME_PBKDF2_HMAC_SHA256`) using cryptography’s `PBKDF2HMAC`. Persisted params must include **`salt`** (url‑safe base64); **`iterations`** and **`length`** default to strong values when omitted (currently **600_000** iterations and **32**‑byte output for SHA‑256).
-- **`crypto`:** `derive_pbkdf2_hmac_sha256` (low-level PBKDF2-HMAC-SHA256 primitive) and `DEFAULT_PBKDF2_ITERATIONS_STRONG`.
-- **`key_mgmt`:** `derive_kek(passphrase, params)` is the only passphrase KEK entry point; params come from persisted JSON or from **`pbkdf2_hmac_sha256_params(salt, ...)`**, which builds the dict for the registered **`pbkdf2-hmac-sha256`** KDF (default **200_000** iterations unless overridden). No `derive_kek_from_passphrase` helper—call **`derive_kek(passphrase, pbkdf2_hmac_sha256_params(salt))`** instead of the old `crypto.derive_kek_from_passphrase`.
+- **`gemstone_utils.sqlalchemy.key_storage`:** Models `GemstoneKeyKdf` and `GemstoneKeyRecord` (tables `gemstone_key_kdf`, `gemstone_key_record`). Logical `key_id` **0** is the KEK canary; **1+** are DEKs. The wire segment `keyid` identifies the KEK slot (KDF row), not the DEK’s primary key.
+- **Helpers:** `new_kdf_params` (wrapper around `recommended_kdf_params`), `wire_wrap`, `wire_to_keyrecord`, `keyrecord_to_wire`, `unwrap_stored_key`, `set_kdf_params` / `get_kdf_params`, `rewrap_key_records`, `make_keyctx_resolver`.
+- **`crypto`:** `derive_pbkdf2_hmac_sha256` (low-level primitive) and `DEFAULT_PBKDF2_ITERATIONS_STRONG`.
 
 ### Development
 

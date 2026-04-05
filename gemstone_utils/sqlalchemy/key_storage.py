@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import json
-import os
 from collections import OrderedDict
 from typing import Callable, Iterable, Iterator, Mapping, Optional
 
@@ -16,11 +15,10 @@ from gemstone_utils.crypto import encrypt_with_alg
 from gemstone_utils.db import GemstoneDB, get_session as default_get_session
 from gemstone_utils.encrypted_fields import format_encrypted_field, parse_encrypted_field
 from gemstone_utils.key_mgmt import (
-    DEFAULT_PBKDF2_ITERATIONS_STRONG,
     derive_kek,
     load_keyctx,
     load_passphrase as default_load_passphrase,
-    pbkdf2_hmac_sha256_params,
+    recommended_kdf_params,
     rotate_kek,
     unwrap_key,
 )
@@ -53,16 +51,13 @@ class GemstoneKeyRecord(GemstoneDB):
     wrapped = Column(Text, nullable=False)
 
 
-def new_pbkdf2_kdf_params(salt: Optional[bytes] = None) -> dict:
+def new_kdf_params(salt: Optional[bytes] = None) -> dict:
     """
-    Build a complete params dict for :func:`~gemstone_utils.key_mgmt.derive_kek`
-    and :func:`set_kdf_params`, including random salt when omitted.
+    Params dict for :func:`~gemstone_utils.key_mgmt.derive_kek` and
+    :func:`set_kdf_params`, using the library's recommended KDF (same as
+    :func:`~gemstone_utils.key_mgmt.recommended_kdf_params`).
     """
-    if salt is None:
-        salt = os.urandom(16)
-    return pbkdf2_hmac_sha256_params(
-        salt, iterations=DEFAULT_PBKDF2_ITERATIONS_STRONG, length=32
-    )
+    return recommended_kdf_params(salt=salt)
 
 
 def wire_wrap(
@@ -174,8 +169,6 @@ def rewrap_key_records(
             raise ValueError(
                 f"key_id={row.key_id}: wire segment keyid {seg} != old_wrap_key_id {old_wrap_key_id}"
             )
-        if alg_id != "A256GCM":
-            raise ValueError(f"key_id={row.key_id}: unsupported alg in wire {alg_id!r}")
         records.append(wire_to_keyrecord(row.key_id, row.wrapped))
 
     new_check, updated = rotate_kek(
