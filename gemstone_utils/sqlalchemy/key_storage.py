@@ -134,7 +134,27 @@ def set_kdf_params(session: Session, key_id: str, params: dict) -> None:
         row.updated_at = now
 
 
-def get_wrapped(session: Session, logical_key_id: int) -> str:
+def set_kek_canary(session: Session, key_id: str, canary_wrapped: str) -> None:
+    """Set ``canary_wrapped`` on the KEK slot row. Call :func:`set_kdf_params` first."""
+    row = session.get(GemstoneKeyKdf, key_id)
+    if row is None:
+        raise KeyError(f"no KDF row for key_id={key_id}; call set_kdf_params first")
+    now = _utcnow()
+    row.canary_wrapped = canary_wrapped
+    row.updated_at = now
+
+
+def set_app_reencrypt_pending(session: Session, key_id: str, pending: bool) -> None:
+    """Set ``app_reencrypt_pending`` on the KEK slot row."""
+    row = session.get(GemstoneKeyKdf, key_id)
+    if row is None:
+        raise KeyError(f"no KDF row for key_id={key_id}")
+    now = _utcnow()
+    row.app_reencrypt_pending = pending
+    row.updated_at = now
+
+
+def get_wrapped(session: Session, logical_key_id: str) -> str:
     row = session.get(GemstoneKeyRecord, logical_key_id)
     if row is None:
         raise KeyError(f"no key record for key_id={logical_key_id}")

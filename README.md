@@ -4,6 +4,17 @@
 
 The package is licensed under the **MPL‑2.0**, allowing use in both open‑source and proprietary projects while keeping modifications to this library itself open.
 
+## Documentation
+
+| Topic | Guide |
+|--------|--------|
+| SQLAlchemy `EncryptedString`, init order, rotation | [docs/sqlalchemy.md](docs/sqlalchemy.md) |
+| Persisted keys (`key_storage`), two-level wire semantics, bootstrap | [docs/key-storage.md](docs/key-storage.md) |
+| Experimental `resolve_secret` and backends | [docs/secrets-resolver.md](docs/secrets-resolver.md) |
+| Curated public API (stable vs experimental) | [docs/api.md](docs/api.md) |
+
+Breaking changes and migration (including UUID key ids): [RELEASE_NOTES.md](RELEASE_NOTES.md). A data-migration outline for key ids: [scripts/migrate_key_ids.py](scripts/migrate_key_ids.py).
+
 ---
 
 ## Features
