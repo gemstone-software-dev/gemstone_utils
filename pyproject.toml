@@ -29,7 +29,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/cdbunch72/gemstone_utils"
+Homepage = "https://github.com/gemstone-software-dev/gemstone_utils"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

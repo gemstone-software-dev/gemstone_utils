@@ -71,7 +71,7 @@ First **alpha** toward **v0.3.0**. API and behavior may still change before the 
 
 This release **renames the distribution and Python package** from `emerald_utils` to **`gemstone_utils`** (top-level package directory and `pip install` name). Behavior and public APIs are otherwise unchanged from v0.2.0; this is a branding and clarity update.
 
-The project homepage URL is [github.com/cdbunch72/gemstone_utils](https://github.com/cdbunch72/gemstone_utils). If your Git remote or older docs still reference `emerald_utils`, update them when you migrate.
+The project homepage URL is [github.com/gemstone-software-dev/gemstone_utils](https://github.com/gemstone-software-dev/gemstone_utils). If your Git remote or older docs still reference `emerald_utils`, update them when you migrate.
 
 ### Highlights
 
@@ -101,10 +101,8 @@ pip install gemstone_utils
 Or from a GitHub release asset (after you publish `v0.2.1`):
 
 ```bash
-pip install https://github.com/cdbunch72/gemstone_utils/releases/download/v0.2.1/gemstone_utils-0.2.1.tar.gz
+pip install https://github.com/gemstone-software-dev/gemstone_utils/releases/download/v0.2.1/gemstone_utils-0.2.1.tar.gz
 ```
-
-If the GitHub repository slug is still `emerald_utils`, use `.../emerald_utils/releases/download/...` and the matching sdist filename until the repo is renamed.
 
 ### License
 
@@ -158,7 +156,7 @@ pip install emerald_utils
 Or from a GitHub release asset (after you publish `v0.2.0`):
 
 ```bash
-pip install https://github.com/cdbunch72/emerald_utils/releases/download/v0.2.0/emerald_utils-0.2.0.tar.gz
+pip install https://github.com/gemstone-software-dev/gemstone_utils/releases/download/v0.2.0/emerald_utils-0.2.0.tar.gz
 ```
 
 ### License
@@ -169,9 +167,9 @@ pip install https://github.com/cdbunch72/emerald_utils/releases/download/v0.2.0/
 
 ## v0.1.0
 
-**Tag:** [`v0.1.0`](https://github.com/cdbunch72/emerald_utils/releases/tag/v0.1.0)  
+**Tag:** [`v0.1.0`](https://github.com/gemstone-software-dev/gemstone_utils/releases/tag/v0.1.0)  
 **Commit:** `271bd51`  
-**Released:** 15 Mar 2026 (per [GitHub release](https://github.com/cdbunch72/emerald_utils/releases/tag/v0.1.0))
+**Released:** 15 Mar 2026 (per [GitHub release](https://github.com/gemstone-software-dev/gemstone_utils/releases/tag/v0.1.0))
 
 ### Overview
 
@@ -187,7 +185,7 @@ Stable components (crypto, encrypted fields, SQLAlchemy) are intended for long-t
 ### Installation
 
 ```bash
-pip install https://github.com/cdbunch72/emerald_utils/releases/download/v0.1.0/emerald_utils-0.1.0.tar.gz
+pip install https://github.com/gemstone-software-dev/gemstone_utils/releases/download/v0.1.0/emerald_utils-0.1.0.tar.gz
 ```
 
 Or from a clone:
