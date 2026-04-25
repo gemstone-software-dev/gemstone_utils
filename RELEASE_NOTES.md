@@ -15,7 +15,22 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 
 ## Unreleased
 
-### Breaking changes
+Nothing yet.
+
+---
+
+## v0.4.0rc1 (release candidate)
+
+**Tag:** `v0.4.0rc1`  
+**PyPI:** `pip install gemstone_utils==0.4.0rc1` or `pip install --pre gemstone_utils` (see [pre-release install behavior](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions)).
+
+### Overview
+
+First **release candidate** toward **v0.4.0**. This line has been exercised in a **real application**; further work on **0.4.x** should follow the **RC** rules in the pre-release naming section above (**feature freeze** except for regressions, documentation, and release blockers).
+
+### Changes since v0.3.0a2
+
+#### Breaking changes
 
 - **Removed experimental SQL KV:** `gemstone_utils.experimental.sqlexp` and `gemstone_utils.experimental.sqlexp_backend` are deleted. The `sqlexp:` prefix is no longer a recognized optional backend in `secrets_resolver`. For bootstrap secrets, use `env:`, `file:`, `secret:`, or `azexp:` (with `gemstone_utils[azure]`). For application secrets after `init_db`, use `EncryptedString` / `encrypted_fields` or your own tables.
 
