@@ -1,0 +1,42 @@
+# Publishes sdist + wheel to PyPI when a GitHub Release is published.
+#
+# One-time PyPI setup (Trusted Publishing / OIDC):
+# 1. PyPI project → Settings → Publishing → Add a new pending publisher
+#    - PyPI project: gemstone_utils
+#    - Owner: gemstone-software-dev
+#    - Repository name: gemstone_utils
+#    - Workflow name: publish.yml
+#    - Environment name: leave blank (optional)
+# 2. Merge this workflow, then create tag vX.Y.Z and a GitHub Release; the first
+#    successful run confirms the publisher.
+#
+# Legacy alternative: set repository secret PYPI_API_TOKEN and pass
+# password: ${{ secrets.PYPI_API_TOKEN }} to pypa/gh-action-pypi-publish.
+
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build sdist and wheel
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

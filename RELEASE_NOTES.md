@@ -19,6 +19,17 @@ Nothing yet.
 
 ---
 
+## v0.4.0 (stable)
+
+**Tag:** `v0.4.0`  
+**PyPI:** `pip install gemstone_utils==0.4.0`
+
+### Overview
+
+**Stable** release matching **[v0.4.0rc1](#v040rc1-release-candidate)** with no intentional API or behavior changes. This is the current **stable** line for the **`gemstone_utils`** package (post-`emerald_utils` rename); pin **`gemstone_utils==0.4.0`** or a compatible range for production use.
+
+---
+
 ## v0.4.0rc1 (release candidate)
 
 **Tag:** `v0.4.0rc1`  
@@ -101,11 +112,13 @@ First **alpha** toward **v0.3.0**. API and behavior may still change before the 
 
 ---
 
-## v0.2.1 (latest stable)
+## v0.2.1
 
 **Tag:** `v0.2.1`
 
 ### Overview
+
+For the **current stable** release on this package line, use **[v0.4.0](#v040-stable)** (or newer **0.4.x** as published). This section documents the **rename-only** milestone.
 
 This release **renames the distribution and Python package** from `emerald_utils` to **`gemstone_utils`** (top-level package directory and `pip install` name). Behavior and public APIs are otherwise unchanged from v0.2.0; this is a branding and clarity update.
 
