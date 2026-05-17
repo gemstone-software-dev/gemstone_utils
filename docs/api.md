@@ -48,8 +48,7 @@ This page lists **stable, intended** entry points for application use. It is not
 
 ## Experimental
 
-- `gemstone_utils.experimental.secrets_resolver` — `resolve_secret`, `set_keyctx_resolver`, `register_backend`
-- `gemstone_utils.experimental.azexp_backend` — Azure Key Vault (extra `[azure]`)
+- `gemstone_utils.experimental.secrets_resolver` — `resolve_secret`, `set_keyctx_resolver`, `register_backend`, `BackendNotImplemented`
 
 ## Further reading
 

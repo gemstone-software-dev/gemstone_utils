@@ -15,7 +15,20 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 
 ## Unreleased
 
-Nothing yet.
+### v0.5.0 (unreleased)
+
+#### Breaking changes
+
+- **Removed `azexp` backend:** `gemstone_utils.experimental.azexp_backend` is deleted. The `azexp:` prefix and optional extra `gemstone_utils[azure]` are no longer supported.
+- **Colon references require a backend:** Any value containing `:` must use a registered prefix (`env`, `file`, `secret`, `literal`, or `register_backend`). Unknown prefixes raise **`BackendNotImplemented`** (`reason="unregistered"`). Removed prefixes (e.g. `azexp`) raise **`BackendNotImplemented`** (`reason="removed"`).
+- **New built-in `literal:`** — returns the substring after the first colon unchanged (for URLs, connection strings, or other opaque values). Still runs encrypted-field post-processing when applicable.
+
+#### Migration
+
+- `http://host/path` → `literal:http://host/path`
+- `azexp:https://vault.vault.azure.net/secrets/foo` → `secret:foo` when the platform mounts Key Vault secrets as files (Azure Container Apps, quadlet, etc.), or `file:/mount/path/foo` for a custom mount path
+- Opaque legacy `azexp:...` text → `literal:azexp:...`
+- Plain strings without `:` are unchanged
 
 ---
 

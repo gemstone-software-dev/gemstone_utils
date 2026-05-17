@@ -1,6 +1,6 @@
 # Experimental secrets resolver
 
-The module `gemstone_utils.experimental.secrets_resolver` resolves string references to secret values (environment, files, container secret mounts, and optional plugins). It is intended for **configuration bootstrap** (for example Pydantic `BeforeValidator`), not as a full secrets manager.
+The module `gemstone_utils.experimental.secrets_resolver` resolves string references to secret values (environment, files, container secret mounts, literals, and optional plugins). It is intended for **configuration bootstrap** (for example Pydantic `BeforeValidator`), not as a full secrets manager.
 
 **Stability:** Experimental. The API and behavior may change; see [README.md](../README.md#experimental-components).
 
@@ -11,9 +11,19 @@ The module `gemstone_utils.experimental.secrets_resolver` resolves string refere
 | `env:VAR` | Read `os.environ[VAR]`, cache, then **delete** the variable from the environment (scrub). |
 | `file:/path` | Read UTF-8 file once, strip, cache. |
 | `secret:name` | Search `CREDENTIALS_DIRECTORY`, `/run/secrets/`, `/var/run/secrets/` (via `resolve_file`). |
-| `azexp:https://...` | Optional Azure Key Vault — import `gemstone_utils.experimental.azexp_backend`; requires `gemstone_utils[azure]`. |
+| `literal:opaque` | Return the substring after the first colon unchanged (URLs, connection strings, etc.). |
 
-Unknown prefixes can be registered with `register_backend(prefix, resolver, ...)`.
+Custom prefixes can be registered with `register_backend(prefix, resolver, ...)`.
+
+Values containing `:` must use one of the prefixes above (or a registered backend). Plain strings without `:` are returned unchanged.
+
+## `BackendNotImplemented`
+
+Subclass of **`RuntimeError`**. Raised when a reference names a removed or unregistered backend.
+
+- **`reason="removed"`** — prefix was removed (e.g. `azexp:` in v0.5.0).
+- **`reason="unregistered"`** — unknown prefix; use `literal:...` for opaque values or `register_backend`.
+- **`prefix`** — normalized backend name from the reference.
 
 ## Encrypted wire values (`$A256GCM$...`)
 
@@ -31,6 +41,5 @@ If the resolved string looks like an encrypted field (`is_encrypted_prefix`), it
 
 - **`env:` scrubbing** removes variables after first read; behavior is process-global.
 - **Caching** applies to env, file, and secret paths; treat the process as holding secrets in memory.
-- **Plugin** `azexp` is optional and must be explicitly imported to register.
 
 For backend-specific details, see [README.md](../README.md#secret-resolver-backends).

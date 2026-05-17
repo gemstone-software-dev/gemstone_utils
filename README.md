@@ -61,8 +61,9 @@ Suitable for Pydantic `BeforeValidator`:
 Supports:
 - `env:` — environment variables (cached + scrubbed)
 - `file:` — read from filesystem
-- `secret:` — systemd / container secret directories
-- pluggable backend (`azexp:`) enabled by explicitly importing the plugin module
+- `secret:` — systemd / container secret directories (`CREDENTIALS_DIRECTORY`, `/run/secrets/`)
+- `literal:` — opaque value (substring after first colon; use for URLs and strings with colons)
+- pluggable backends via `register_backend`
 - `$A256GCM$keyid$base64(json)$base64(blob)` encrypted values (requires `secrets_resolver.set_keyctx_resolver`)
 
 Not intended to be the final vault/meta‑manager.
@@ -73,12 +74,6 @@ Not intended to be the final vault/meta‑manager.
 
 ```
 pip install gemstone_utils
-```
-
-With Azure Key Vault support:
-
-```
-pip install 'gemstone_utils[azure]'
 ```
 
 For running tests in a checkout:
@@ -232,11 +227,10 @@ Searches:
 - `/run/secrets/name`
 - `/var/run/secrets/name`
 
-### `azexp:https://vault.vault.azure.net/secrets/name`
-Fetches from Azure Key Vault. Enabled by importing
-`gemstone_utils.experimental.azexp_backend` (or calling its `enable()`).
-Install `gemstone_utils[azure]` and authenticate with `DefaultAzureCredential`.
-Use `azexp_backend.set_azexp_credential(...)` to override credentials.
+For Azure Container Apps, Cloud Run, or other platforms with a custom mount path, use `file:/path/to/secret` or mount secrets at `/run/secrets/{name}` so `secret:name` applies.
+
+### `literal:opaque`
+Returns everything after the first colon unchanged (e.g. `literal:http://host/path` → `http://host/path`). Required for any config value that contains `:` but is not a backend reference. Unknown prefixes raise **`BackendNotImplemented`**.
 
 ### Encrypted field values (`$A256GCM$…`)
 Values use the wire form `$A256GCM$<uuid>$<base64(json)>$<base64(blob)>` where `<uuid>` is a canonical UUID string (segment 2). URL-safe base64 of a JSON object for per-algorithm parameters (currently `{}` for `A256GCM`), then URL-safe base64 of the ciphertext blob. Automatically decrypted using `secrets_resolver.set_keyctx_resolver` (separate from `EncryptedString.set_keyctx_resolver`).

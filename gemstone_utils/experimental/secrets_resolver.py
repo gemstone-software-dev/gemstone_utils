@@ -16,12 +16,33 @@ from gemstone_utils.types import KeyContext
 
 
 # ---------------------------------------------------------------------------
+# Exceptions + removed backends
+# ---------------------------------------------------------------------------
+
+
+class BackendNotImplemented(RuntimeError):
+    """Secret reference uses a backend that is removed or not registered."""
+
+    def __init__(self, prefix: str, message: str, *, reason: str) -> None:
+        self.prefix = prefix
+        self.reason = reason  # "removed" | "unregistered"
+        super().__init__(f"{prefix}: {message}")
+
+
+_REMOVED_BACKENDS: dict[str, str] = {
+    "azexp": (
+        "removed in v0.5.0; use secret:name for container-mounted secrets "
+        "(Azure Container Apps, quadlet, etc.) or file:/path for a custom mount"
+    ),
+}
+
+
+# ---------------------------------------------------------------------------
 # Global cache + keyctx resolver
 # ---------------------------------------------------------------------------
 
 _cache: dict[str, str] = {}
 _backends: dict[str, Callable[[str], str | None]] = {}
-_known_optional_backends = {"azexp"}
 
 _keyctx_resolver: Optional[Callable[[str], KeyContext]] = None
 
@@ -111,6 +132,14 @@ def resolve_secretfile(name: str) -> str:
     raise FileNotFoundError(f"secret '{name}' not found in known secret directories")
 
 
+# ---------------------------------------------------------------------------
+# literal:
+# ---------------------------------------------------------------------------
+
+def resolve_literal(body: str) -> str:
+    return body
+
+
 def register_backend(
     prefix: str,
     resolver: Callable[[str], str | None],
@@ -161,30 +190,37 @@ def resolve_secret(value: str):
       - env:VAR
       - file:/path
       - secret:name
+      - literal:opaque (substring after first colon, unchanged)
       - pluggable backends (registered via register_backend)
       - encrypted field
-      - literal string
+      - plain string (no colon)
     """
     if is_encrypted_prefix(value):
         keyctx = _resolve_keyctx_for_ciphertext(value)
         return decrypt_string(value, keyctx)
 
-    if ":" in value:
-        prefix, body = value.split(":", 1)
-        norm = prefix.strip().lower()
-        backend = _backends.get(norm)
-        if backend is not None:
-            return _postprocess_resolved(backend(body))
-        if norm in _known_optional_backends:
-            raise RuntimeError(
-                f"{norm}: backend is not enabled. Import its plugin module "
-                f"before calling resolve_secret()."
-            )
+    if ":" not in value:
+        return value
 
-    return value
+    prefix, body = value.split(":", 1)
+    norm = prefix.strip().lower()
+    backend = _backends.get(norm)
+    if backend is not None:
+        return _postprocess_resolved(backend(body))
+
+    if norm in _REMOVED_BACKENDS:
+        raise BackendNotImplemented(norm, _REMOVED_BACKENDS[norm], reason="removed")
+
+    raise BackendNotImplemented(
+        norm,
+        "no backend registered; use register_backend(...), "
+        "a built-in prefix (env, file, secret), or literal:... for opaque values",
+        reason="unregistered",
+    )
 
 
 # Register built-ins.
 register_backend("env", resolve_env)
 register_backend("file", resolve_file)
 register_backend("secret", resolve_secretfile)
+register_backend("literal", resolve_literal)
