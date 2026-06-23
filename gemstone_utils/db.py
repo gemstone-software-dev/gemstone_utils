@@ -19,8 +19,10 @@ class GemstoneDB(DeclarativeBase):
 _engine: Optional[Engine] = None
 _session_factory: Optional[sessionmaker[Session]] = None
 
-# Cross-process schema init lock (PostgreSQL pg_advisory_xact_lock key).
-_SCHEMA_INIT_LOCK_KEY = 0x47554E5F44425F494E4954  # GUN_DB_INIT
+# Cross-process schema init lock (PostgreSQL pg_advisory_xact_lock keys).
+# Two int32 keys derived from ASCII "GUN_" + "DBIN" (fits pg_advisory_xact_lock(int, int)).
+_SCHEMA_INIT_LOCK_KEY1 = 0x47554E5F
+_SCHEMA_INIT_LOCK_KEY2 = 0x4442494E
 _MYSQL_SCHEMA_INIT_LOCK_NAME = "gemstone_utils_schema_init"
 _MYSQL_SCHEMA_INIT_LOCK_TIMEOUT_SEC = 300
 
@@ -84,8 +86,8 @@ def _create_all_locked(engine: Engine, drivername: str) -> None:
     if _is_postgresql(drivername):
         with engine.begin() as conn:
             conn.execute(
-                text("SELECT pg_advisory_xact_lock(:key)"),
-                {"key": _SCHEMA_INIT_LOCK_KEY},
+                text("SELECT pg_advisory_xact_lock(:key1, :key2)"),
+                {"key1": _SCHEMA_INIT_LOCK_KEY1, "key2": _SCHEMA_INIT_LOCK_KEY2},
             )
             GemstoneDB.metadata.create_all(bind=conn)
         return
