@@ -19,6 +19,17 @@ Nothing yet.
 
 ---
 
+## v0.4.1
+
+**Tag:** `v0.4.1`  
+**PyPI:** `pip install gemstone_utils==0.4.1`
+
+### Fixes
+
+- **`init_db` multi-worker startup:** PostgreSQL and MySQL / MariaDB schema creation now runs under a dialect advisory lock so concurrent workers (e.g. gunicorn) do not race on `CREATE TABLE` during ephemeral-database bootstrap.
+
+---
+
 ## v0.4.0 (stable)
 
 **Tag:** `v0.4.0`  
