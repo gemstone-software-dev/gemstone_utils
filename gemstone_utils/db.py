@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
@@ -18,6 +18,11 @@ class GemstoneDB(DeclarativeBase):
 
 _engine: Optional[Engine] = None
 _session_factory: Optional[sessionmaker[Session]] = None
+
+# Cross-process schema init lock (PostgreSQL pg_advisory_xact_lock key).
+_SCHEMA_INIT_LOCK_KEY = 0x47554E5F44425F494E4954  # GUN_DB_INIT
+_MYSQL_SCHEMA_INIT_LOCK_NAME = "gemstone_utils_schema_init"
+_MYSQL_SCHEMA_INIT_LOCK_TIMEOUT_SEC = 300
 
 
 def _is_sqlite(drivername: str) -> bool:
@@ -71,6 +76,46 @@ def _register_sqlite_pragmas(engine: Engine) -> None:
             cursor.close()
 
 
+def _create_all_locked(engine: Engine, drivername: str) -> None:
+    """
+    Create missing tables, serializing DDL on backends where concurrent
+    ``create_all`` from multiple workers can race.
+    """
+    if _is_postgresql(drivername):
+        with engine.begin() as conn:
+            conn.execute(
+                text("SELECT pg_advisory_xact_lock(:key)"),
+                {"key": _SCHEMA_INIT_LOCK_KEY},
+            )
+            GemstoneDB.metadata.create_all(bind=conn)
+        return
+
+    if _is_mysql_family(drivername):
+        with engine.begin() as conn:
+            acquired = conn.execute(
+                text("SELECT GET_LOCK(:name, :timeout)"),
+                {
+                    "name": _MYSQL_SCHEMA_INIT_LOCK_NAME,
+                    "timeout": _MYSQL_SCHEMA_INIT_LOCK_TIMEOUT_SEC,
+                },
+            ).scalar_one()
+            if acquired != 1:
+                raise RuntimeError(
+                    f"failed to acquire MySQL schema init lock "
+                    f"({_MYSQL_SCHEMA_INIT_LOCK_NAME!r})"
+                )
+            try:
+                GemstoneDB.metadata.create_all(bind=conn)
+            finally:
+                conn.execute(
+                    text("SELECT RELEASE_LOCK(:name)"),
+                    {"name": _MYSQL_SCHEMA_INIT_LOCK_NAME},
+                )
+        return
+
+    GemstoneDB.metadata.create_all(bind=engine)
+
+
 def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
     """
     Configure the process-global SQLAlchemy engine and session factory, then
@@ -82,6 +127,10 @@ def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
     MariaDB utf8mb4 + pool tuning; PostgreSQL UTC session timezone + pool
     tuning). Pass ``**engine_kw`` to override or extend :func:`create_engine`
     arguments.
+
+    Schema creation uses a dialect advisory lock on PostgreSQL and MySQL /
+    MariaDB so multiple workers (e.g. gunicorn) can call ``init_db`` at
+    startup without racing on ``CREATE TABLE``.
 
     Returns the new :class:`~sqlalchemy.engine.Engine`.
     """
@@ -103,7 +152,7 @@ def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
         expire_on_commit=False,
         class_=Session,
     )
-    GemstoneDB.metadata.create_all(bind=_engine)
+    _create_all_locked(_engine, url.drivername)
     return _engine
 
 
