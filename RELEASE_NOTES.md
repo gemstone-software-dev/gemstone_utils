@@ -27,6 +27,7 @@ Nothing yet.
 ### Fixes
 
 - **`init_db` multi-worker startup:** PostgreSQL and MySQL / MariaDB schema creation now runs under a dialect advisory lock so concurrent workers (e.g. gunicorn) do not race on `CREATE TABLE` during ephemeral-database bootstrap.
+- **PostgreSQL lock key:** Uses `pg_advisory_xact_lock(int, int)` with int32 keys (the initial single-key constant exceeded PostgreSQL `bigint` range).
 
 ---
 
