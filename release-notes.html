@@ -1,0 +1,791 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="API reference" href="reference/index.html"><link rel="prev" title="Experimental secrets resolver" href="secrets-resolver.html">
+        <link rel="canonical" href="https://gemstone-software-dev.github.io/gemstone_utils/release-notes.html">
+        <link rel="prefetch" href="_static/gemstone_software_logo_full_cropped.png" as="image">
+        <link rel="prefetch" href="_static/gemstone_software_logo_full_cropped.png" as="image">
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2025.12.19 -->
+        <title>gemstone_utils release notes - gemstone_utils</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=62be05a3" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  --font-stack: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-stack--monospace: "Source Code Pro", ui-monospace, monospace;
+  --color-gemstone-heading-border: #6D28D9;
+  --color-sidebar-background: #f3eef8;
+  --color-table-header-background: var(--color-sidebar-background);
+  --color-code-background: #f0edf4;
+  --color-gemstone-target-accent: #7C3AED;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --font-stack: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-stack--monospace: "Source Code Pro", ui-monospace, monospace;
+  --color-gemstone-heading-border: #A78BFA;
+  --color-sidebar-background: #150d1f;
+  --color-table-header-background: #1f1530;
+  --color-gemstone-target-accent: #C4B5FD;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --font-stack: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-stack--monospace: "Source Code Pro", ui-monospace, monospace;
+  --color-gemstone-heading-border: #A78BFA;
+  --color-sidebar-background: #150d1f;
+  --color-table-header-background: #1f1530;
+  --color-gemstone-target-accent: #C4B5FD;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">gemstone_utils</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/gemstone_software_logo_full_cropped.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/gemstone_software_logo_full_cropped.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">gemstone_utils</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sqlalchemy.html">SQLAlchemy encrypted columns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="key-storage.html">SQL key storage (<code class="docutils literal notranslate"><span class="pre">sqlalchemy.key_storage</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="election.html">SQL-backed leader election (<code class="docutils literal notranslate"><span class="pre">gemstone_utils.election</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="secrets-resolver.html">Experimental secrets resolver</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">gemstone_utils release notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API reference</a><input aria-label="Toggle navigation of API reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/crypto.html">gemstone_utils.crypto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_id.html">gemstone_utils.key_id</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/types.html">gemstone_utils.types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/encrypted_fields.html">gemstone_utils.encrypted_fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_mgmt.html">gemstone_utils.key_mgmt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_mgmt_registry.html">gemstone_utils.key_mgmt.registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_mgmt_kdf.html">gemstone_utils.key_mgmt.kdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/db.html">gemstone_utils.db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/election.html">gemstone_utils.election</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/sqlalchemy_encrypted_type.html">gemstone_utils.sqlalchemy.encrypted_type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/sqlalchemy_lazy_secret.html">gemstone_utils.sqlalchemy.lazy_secret</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/sqlalchemy_key_storage.html">gemstone_utils.sqlalchemy.key_storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/secrets_resolver.html">gemstone_utils.experimental.secrets_resolver</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/release-notes.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="gemstone-utils-release-notes">
+<h1>gemstone_utils release notes<a class="headerlink" href="#gemstone-utils-release-notes" title="Link to this heading">¶</a></h1>
+<section id="pre-release-naming-gemstone-utils">
+<h2>Pre-release naming (gemstone_utils)<a class="headerlink" href="#pre-release-naming-gemstone-utils" title="Link to this heading">¶</a></h2>
+<p>Pre-release versions follow <strong><a class="reference external" href="https://packaging.python.org/en/latest/specifications/version-specifiers/">PEP 440</a></strong> ordering (<code class="docutils literal notranslate"><span class="pre">dev</span></code> &lt; <code class="docutils literal notranslate"><span class="pre">a</span></code> &lt; <code class="docutils literal notranslate"><span class="pre">b</span></code> &lt; <code class="docutils literal notranslate"><span class="pre">rc</span></code> &lt; final). For <strong>this project</strong>, the qualifiers mean:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">dev</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">0.3.0.dev0</span></code>):</strong> Development on the main integration line; not a promise that every commit is green. Intended for contributors and early git installs, not as a stability guarantee.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">a</span></code> (alpha, e.g. <code class="docutils literal notranslate"><span class="pre">0.3.0a2</span></code>):</strong> New features and API changes are still allowed. The tree is expected to <strong>build</strong>, and <strong>happy-path tests</strong> pass under normal CI conditions—not a promise of production readiness.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">b</span></code> (beta, e.g. <code class="docutils literal notranslate"><span class="pre">0.3.0b1</span></code>):</strong> <strong>API stable</strong> for that line; suitable for <strong>real-world integration</strong> testing and feedback. Further changes should be fixes and polish, not redesign.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">rc</span></code> (release candidate, e.g. <code class="docutils literal notranslate"><span class="pre">0.3.0rc1</span></code>):</strong> Treated as <strong>release-ready</strong> pending last checks; <strong>feature freeze</strong> except for regressions, docs, and blockers. If nothing new surfaces, the final release matches the RC artifact.</p></li>
+</ul>
+<p><strong>Releases before 1.0</strong> may skip stages (for example a minor may go straight from <code class="docutils literal notranslate"><span class="pre">0.2.x</span></code> to <code class="docutils literal notranslate"><span class="pre">0.3.0</span></code> without publishing an alpha or beta) when the change set is small.</p>
+</section>
+<hr class="docutils" />
+<section id="unreleased">
+<h2>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading">¶</a></h2>
+<section id="v0-5-0-unreleased">
+<h3>v0.5.0 (unreleased)<a class="headerlink" href="#v0-5-0-unreleased" title="Link to this heading">¶</a></h3>
+<section id="breaking-changes">
+<h4>Breaking changes<a class="headerlink" href="#breaking-changes" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>Removed <code class="docutils literal notranslate"><span class="pre">azexp</span></code> backend:</strong> <code class="docutils literal notranslate"><span class="pre">gemstone_utils.experimental.azexp_backend</span></code> is deleted. The <code class="docutils literal notranslate"><span class="pre">azexp:</span></code> prefix and optional extra <code class="docutils literal notranslate"><span class="pre">gemstone_utils[azure]</span></code> are no longer supported.</p></li>
+<li><p><strong>Colon references require a backend:</strong> Any value containing <code class="docutils literal notranslate"><span class="pre">:</span></code> must use a registered prefix (<code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">file</span></code>, <code class="docutils literal notranslate"><span class="pre">secret</span></code>, <code class="docutils literal notranslate"><span class="pre">literal</span></code>, or <code class="docutils literal notranslate"><span class="pre">register_backend</span></code>). Unknown prefixes raise <strong><code class="docutils literal notranslate"><span class="pre">BackendNotImplemented</span></code></strong> (<code class="docutils literal notranslate"><span class="pre">reason=&quot;unregistered&quot;</span></code>). Removed prefixes (e.g. <code class="docutils literal notranslate"><span class="pre">azexp</span></code>) raise <strong><code class="docutils literal notranslate"><span class="pre">BackendNotImplemented</span></code></strong> (<code class="docutils literal notranslate"><span class="pre">reason=&quot;removed&quot;</span></code>).</p></li>
+<li><p><strong>New built-in <code class="docutils literal notranslate"><span class="pre">literal:</span></code></strong> — returns the substring after the first colon unchanged (for URLs, connection strings, or other opaque values). Still runs encrypted-field post-processing when applicable.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SYM_ALG_REGISTRY</span></code> removed:</strong> Use <code class="docutils literal notranslate"><span class="pre">is_supported_sym_alg</span></code> / <code class="docutils literal notranslate"><span class="pre">SUPPORTED_SYM_ALGS</span></code>; the symmetric registry is no longer a public mutable dict.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">register_kdf</span></code> allowlisted:</strong> Only first-party KDF ids in <code class="docutils literal notranslate"><span class="pre">_ALLOWED_KDF_NAMES</span></code> may register; third-party runtime registration is unsupported.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">parse_encrypted_field</span></code> stricter:</strong> Unknown symmetric algorithm ids in the wire format raise at parse time (previously failed later at decrypt).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">set_kdf_params</span></code> stricter:</strong> Rejects unsupported <code class="docutils literal notranslate"><span class="pre">params[&quot;kdf&quot;]</span></code> at persist time.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">file:</span></code> path allowlist:</strong> Default allowed prefix is <code class="docutils literal notranslate"><span class="pre">/app/secret</span></code> only; override with <code class="docutils literal notranslate"><span class="pre">set_allowed_file_path_prefixes</span></code>. Paths must be absolute; <code class="docutils literal notranslate"><span class="pre">~</span></code> is rejected.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">secret:</span></code> name charset:</strong> Names must start with a letter, end with a letter or digit, and contain only <code class="docutils literal notranslate"><span class="pre">[A-Za-z0-9_-]</span></code> (no trailing <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">_</span></code>).</p></li>
+</ul>
+</section>
+<section id="migration">
+<h4>Migration<a class="headerlink" href="#migration" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">http://host/path</span></code> → <code class="docutils literal notranslate"><span class="pre">literal:http://host/path</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azexp:https://vault.vault.azure.net/secrets/foo</span></code> → <code class="docutils literal notranslate"><span class="pre">secret:foo</span></code> when the platform mounts Key Vault secrets as files (Azure Container Apps, quadlet, etc.), or <code class="docutils literal notranslate"><span class="pre">file:/mount/path/foo</span></code> for a custom mount path</p></li>
+<li><p>Opaque legacy <code class="docutils literal notranslate"><span class="pre">azexp:...</span></code> text → <code class="docutils literal notranslate"><span class="pre">literal:azexp:...</span></code></p></li>
+<li><p>Plain strings without <code class="docutils literal notranslate"><span class="pre">:</span></code> are unchanged</p></li>
+<li><p>Apps that mutated <code class="docutils literal notranslate"><span class="pre">SYM_ALG_REGISTRY</span></code> or called <code class="docutils literal notranslate"><span class="pre">register_kdf</span></code> for custom algorithms: add names to gemstone_utils allowlists in a fork, or stay on v0.4.x. No data migration is required for existing <code class="docutils literal notranslate"><span class="pre">A256GCM</span></code> / <code class="docutils literal notranslate"><span class="pre">pbkdf2-hmac-sha256</span></code> deployments.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">file:</span></code> bootstrap:</strong> Use <code class="docutils literal notranslate"><span class="pre">file:/app/secret/...</span></code> in containers, or call <code class="docutils literal notranslate"><span class="pre">set_allowed_file_path_prefixes([...])</span></code> at startup for bare-metal/dev paths (e.g. <code class="docutils literal notranslate"><span class="pre">/etc/myapp/secrets</span></code>). Do not rely on relative paths or <code class="docutils literal notranslate"><span class="pre">~</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">secret:</span></code> names</strong> with dots or slashes: rename mounts to match the <code class="docutils literal notranslate"><span class="pre">secret:</span></code> naming rules or use <code class="docutils literal notranslate"><span class="pre">file:</span></code> under a narrow prefix.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-4-1">
+<h2>v0.4.1<a class="headerlink" href="#v0-4-1" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code><br />
+<strong>PyPI:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gemstone_utils==0.4.1</span></code></p>
+<section id="fixes">
+<h3>Fixes<a class="headerlink" href="#fixes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">init_db</span></code> multi-worker startup:</strong> PostgreSQL and MySQL / MariaDB schema creation now runs under a dialect advisory lock so concurrent workers (e.g. gunicorn) do not race on <code class="docutils literal notranslate"><span class="pre">CREATE</span> <span class="pre">TABLE</span></code> during ephemeral-database bootstrap.</p></li>
+<li><p><strong>PostgreSQL lock key:</strong> Uses <code class="docutils literal notranslate"><span class="pre">pg_advisory_xact_lock(int,</span> <span class="pre">int)</span></code> with int32 keys (the initial single-key constant exceeded PostgreSQL <code class="docutils literal notranslate"><span class="pre">bigint</span></code> range).</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-4-0-stable">
+<h2>v0.4.0 (stable)<a class="headerlink" href="#v0-4-0-stable" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.4.0</span></code><br />
+<strong>PyPI:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gemstone_utils==0.4.0</span></code></p>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h3>
+<p><strong>Stable</strong> release matching <strong><a class="reference internal" href="#v0-4-0rc1-release-candidate">v0.4.0rc1</a></strong> with no intentional API or behavior changes. This is the current <strong>stable</strong> line for the <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code></strong> package (post-<code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code> rename); pin <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils==0.4.0</span></code></strong> or a compatible range for production use.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-4-0rc1-release-candidate">
+<h2>v0.4.0rc1 (release candidate)<a class="headerlink" href="#v0-4-0rc1-release-candidate" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.4.0rc1</span></code><br />
+<strong>PyPI:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gemstone_utils==0.4.0rc1</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--pre</span> <span class="pre">gemstone_utils</span></code> (see <a class="reference external" href="https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions">pre-release install behavior</a>).</p>
+<section id="id1">
+<h3>Overview<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>First <strong>release candidate</strong> toward <strong>v0.4.0</strong>. This line has been exercised in a <strong>real application</strong>; further work on <strong>0.4.x</strong> should follow the <strong>RC</strong> rules in the pre-release naming section above (<strong>feature freeze</strong> except for regressions, documentation, and release blockers).</p>
+</section>
+<section id="changes-since-v0-3-0a2">
+<h3>Changes since v0.3.0a2<a class="headerlink" href="#changes-since-v0-3-0a2" title="Link to this heading">¶</a></h3>
+<section id="id2">
+<h4>Breaking changes<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>Removed experimental SQL KV:</strong> <code class="docutils literal notranslate"><span class="pre">gemstone_utils.experimental.sqlexp</span></code> and <code class="docutils literal notranslate"><span class="pre">gemstone_utils.experimental.sqlexp_backend</span></code> are deleted. The <code class="docutils literal notranslate"><span class="pre">sqlexp:</span></code> prefix is no longer a recognized optional backend in <code class="docutils literal notranslate"><span class="pre">secrets_resolver</span></code>. For bootstrap secrets, use <code class="docutils literal notranslate"><span class="pre">env:</span></code>, <code class="docutils literal notranslate"><span class="pre">file:</span></code>, <code class="docutils literal notranslate"><span class="pre">secret:</span></code>, or <code class="docutils literal notranslate"><span class="pre">azexp:</span></code> (with <code class="docutils literal notranslate"><span class="pre">gemstone_utils[azure]</span></code>). For application secrets after <code class="docutils literal notranslate"><span class="pre">init_db</span></code>, use <code class="docutils literal notranslate"><span class="pre">EncryptedString</span></code> / <code class="docutils literal notranslate"><span class="pre">encrypted_fields</span></code> or your own tables.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-3-0a2-alpha">
+<h2>v0.3.0a2 (alpha)<a class="headerlink" href="#v0-3-0a2-alpha" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.3.0a2</span></code><br />
+<strong>PyPI:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gemstone_utils==0.3.0a2</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--pre</span> <span class="pre">gemstone_utils</span></code> (see <a class="reference external" href="https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions">pre-release install behavior</a>).</p>
+<section id="id3">
+<h3>Overview<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Second <strong>alpha</strong> toward <strong>v0.3.0</strong>. API and runtime behavior are unchanged from <strong>v0.3.0a1</strong>; this release updates <strong>published package metadata</strong> so the PyPI project homepage and other <code class="docutils literal notranslate"><span class="pre">[project.urls]</span></code> fields reflect the repository under the <strong><code class="docutils literal notranslate"><span class="pre">gemstone-software-dev</span></code></strong> organization.</p>
+</section>
+<section id="changes-since-v0-3-0a1">
+<h3>Changes since v0.3.0a1<a class="headerlink" href="#changes-since-v0-3-0a1" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Packaging / documentation:</strong> <a class="reference external" href="https://github.com/gemstone-software-dev/gemstone_utils">Project homepage</a> in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and release-note URLs align with the org repo (see sections below). No code or API changes.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-3-0a1-alpha">
+<h2>v0.3.0a1 (alpha)<a class="headerlink" href="#v0-3-0a1-alpha" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.3.0a1</span></code><br />
+<strong>PyPI:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gemstone_utils==0.3.0a1</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--pre</span> <span class="pre">gemstone_utils</span></code> (see <a class="reference external" href="https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions">pre-release install behavior</a>).</p>
+<section id="id4">
+<h3>Overview<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>First <strong>alpha</strong> toward <strong>v0.3.0</strong>. API and behavior may still change before the stable release; see the pre-release naming section above.</p>
+</section>
+<section id="encrypted-field-wire-format">
+<h3>Encrypted field wire format<a class="headerlink" href="#encrypted-field-wire-format" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Five <code class="docutils literal notranslate"><span class="pre">$</span></code>-separated segments:</strong> <code class="docutils literal notranslate"><span class="pre">$&lt;alg&gt;$&lt;key_id&gt;$&lt;params_b64&gt;$&lt;blob_b64&gt;</span></code> where <strong><code class="docutils literal notranslate"><span class="pre">&lt;alg&gt;</span></code></strong> is a registered symmetric id (today <strong><code class="docutils literal notranslate"><span class="pre">A256GCM</span></code></strong>). <strong><code class="docutils literal notranslate"><span class="pre">&lt;key_id&gt;</span></code></strong> is a <strong>canonical UUID string</strong> (typically <strong>UUIDv7</strong> from <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.key_id.new_key_id()</span></code></strong>). Legacy <strong>integer</strong> segment values are <strong>rejected</strong> at parse time; migrate stored ciphertext before upgrading.</p></li>
+<li><p><strong>Legacy four-part strings</strong> still emit a <strong><code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></strong> and are <strong>scheduled for removal in 0.9.0</strong>; segment 2 must still be a UUID string when using the new parsers.</p></li>
+<li><p><strong>Migration:</strong> Run a <strong>data migration</strong> (application-specific). A <strong>documentation-only</strong> outline lives at <strong><code class="docutils literal notranslate"><span class="pre">scripts/migrate_key_ids.py</span></code></strong>. Migration support is documented through <strong>v0.9.0</strong>.</p></li>
+</ul>
+</section>
+<section id="api-changes-breaking">
+<h3>API changes (breaking)<a class="headerlink" href="#api-changes-breaking" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">parse_encrypted_field(value)</span></code></strong> returns <strong><code class="docutils literal notranslate"><span class="pre">(alg_id,</span> <span class="pre">keyid,</span> <span class="pre">params,</span> <span class="pre">blob)</span></code></strong> where <strong><code class="docutils literal notranslate"><span class="pre">keyid</span></code></strong> is <strong><code class="docutils literal notranslate"><span class="pre">str</span></code></strong> (UUID text).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">KeyContext.keyid</span></code></strong> and <strong><code class="docutils literal notranslate"><span class="pre">KeyRecord.keyid</span></code></strong> use <strong><code class="docutils literal notranslate"><span class="pre">str</span></code></strong> (UUID). <strong><code class="docutils literal notranslate"><span class="pre">KeyRecord.keyid</span></code></strong> may be <strong><code class="docutils literal notranslate"><span class="pre">None</span></code></strong> for a <strong>KEK-check</strong> blob only; <strong><code class="docutils literal notranslate"><span class="pre">verify_kek</span></code></strong> requires <strong><code class="docutils literal notranslate"><span class="pre">keyid</span> <span class="pre">is</span> <span class="pre">None</span></code></strong>; <strong><code class="docutils literal notranslate"><span class="pre">unwrap_key</span></code></strong> requires <strong><code class="docutils literal notranslate"><span class="pre">keyid</span></code></strong> set.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">EncryptedString.set_keyctx_resolver</span></code></strong> and <strong><code class="docutils literal notranslate"><span class="pre">secrets_resolver.set_keyctx_resolver</span></code></strong> take <strong><code class="docutils literal notranslate"><span class="pre">Callable[[str],</span> <span class="pre">KeyContext]</span></code></strong>.</p></li>
+<li><p><strong>Breaking — <code class="docutils literal notranslate"><span class="pre">gemstone_utils.crypto</span></code>:</strong> symmetric registry, <strong><code class="docutils literal notranslate"><span class="pre">encrypt_alg</span></code></strong> / <strong><code class="docutils literal notranslate"><span class="pre">decrypt_alg</span></code></strong> (see prior notes); <strong><code class="docutils literal notranslate"><span class="pre">encrypt_alg</span></code></strong> returns <strong><code class="docutils literal notranslate"><span class="pre">(ciphertext,</span> <span class="pre">updated_params)</span></code></strong>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">format_encrypted_field(alg,</span> <span class="pre">keyid,</span> <span class="pre">blob,</span> <span class="pre">params=None)</span></code></strong> — <strong><code class="docutils literal notranslate"><span class="pre">keyid</span></code></strong> is <strong><code class="docutils literal notranslate"><span class="pre">str</span></code></strong> (UUID).</p></li>
+<li><p><strong>Breaking — <code class="docutils literal notranslate"><span class="pre">gemstone_utils.sqlalchemy.key_storage</span></code>:</strong> <strong><code class="docutils literal notranslate"><span class="pre">GemstoneKeyKdf.key_id</span></code></strong> and <strong><code class="docutils literal notranslate"><span class="pre">GemstoneKeyRecord.key_id</span></code></strong> are <strong><code class="docutils literal notranslate"><span class="pre">String(36)</span></code></strong> UUID text (native <strong><code class="docutils literal notranslate"><span class="pre">Uuid</span></code></strong> columns are <strong>planned for v0.9.0</strong>). <strong><code class="docutils literal notranslate"><span class="pre">GemstoneKeyKdf</span></code></strong> adds <strong><code class="docutils literal notranslate"><span class="pre">canary_wrapped</span></code></strong> and <strong><code class="docutils literal notranslate"><span class="pre">app_reencrypt_pending</span></code></strong>. The KEK canary <strong>no longer</strong> uses <strong><code class="docutils literal notranslate"><span class="pre">gemstone_key_record</span></code> <code class="docutils literal notranslate"><span class="pre">key_id</span> <span class="pre">==</span> <span class="pre">0</span></code></strong>; use <strong><code class="docutils literal notranslate"><span class="pre">set_kek_canary</span></code></strong>. <strong><code class="docutils literal notranslate"><span class="pre">GemstoneKeyRecord</span></code></strong> holds <strong>DEKs only</strong>. <strong><code class="docutils literal notranslate"><span class="pre">rewrap_key_records</span></code></strong> rewraps <strong>all</strong> KEK-slot canaries and all DEK rows. Existing databases require <strong>schema migration</strong> (or recreate).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">is_encrypted_prefix</span></code>:</strong> unchanged behavior (registered algorithm segment).</p></li>
+</ul>
+</section>
+<section id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">uuid6</span></code></strong> is installed automatically on <strong>Python &lt; 3.14</strong> for UUIDv7 generation (<strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.key_id</span></code></strong>). Python <strong>3.14+</strong> uses <strong><code class="docutils literal notranslate"><span class="pre">uuid.uuid7()</span></code></strong> from the standard library.</p></li>
+</ul>
+</section>
+<section id="key-mgmt-package-and-kdf-registry">
+<h3><code class="docutils literal notranslate"><span class="pre">key_mgmt</span></code> package and KDF registry<a class="headerlink" href="#key-mgmt-package-and-kdf-registry" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">verify_kek</span></code></strong> / <strong><code class="docutils literal notranslate"><span class="pre">make_kek_check_record</span></code>:</strong> KEK-check records use <strong><code class="docutils literal notranslate"><span class="pre">KeyRecord.keyid</span> <span class="pre">is</span> <span class="pre">None</span></code></strong> (no sentinel integer <strong><code class="docutils literal notranslate"><span class="pre">0</span></code></strong>).</p></li>
+<li><p><strong>Breaking:</strong> <code class="docutils literal notranslate"><span class="pre">gemstone_utils.key_mgmt</span></code> is now a <strong>package</strong> (<code class="docutils literal notranslate"><span class="pre">key_mgmt/__init__.py</span></code>, <code class="docutils literal notranslate"><span class="pre">key_mgmt/registry.py</span></code>, <code class="docutils literal notranslate"><span class="pre">key_mgmt/kdf/…</span></code>). Imports like <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">gemstone_utils.key_mgmt</span> <span class="pre">import</span> <span class="pre">derive_kek</span></code> still work.</p></li>
+<li><p><strong>Registry:</strong> <code class="docutils literal notranslate"><span class="pre">register_kdf</span></code> and <code class="docutils literal notranslate"><span class="pre">derive_kek(passphrase,</span> <span class="pre">params)</span></code> live in <code class="docutils literal notranslate"><span class="pre">key_mgmt.registry</span></code> and are re-exported from <code class="docutils literal notranslate"><span class="pre">gemstone_utils.key_mgmt</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">recommended_kdf_params(salt=None)</span></code></strong> — single entry point for the library’s <em>current</em> recommended KDF params (today delegates to <code class="docutils literal notranslate"><span class="pre">key_mgmt.kdf.pbkdf2.recommended_pbkdf2_params</span></code>).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.key_mgmt.kdf</span></code>:</strong> <code class="docutils literal notranslate"><span class="pre">RecommendedKdfParamsFn</span></code> and <code class="docutils literal notranslate"><span class="pre">HasKdfRegistryName</span></code> protocols plus a package docstring describing the contract for algorithm submodules (<code class="docutils literal notranslate"><span class="pre">NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">recommended_&lt;algo&gt;_params</span></code>, optional explicit params builder).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.key_mgmt.kdf.pbkdf2</span></code>:</strong> <code class="docutils literal notranslate"><span class="pre">NAME</span></code> (<code class="docutils literal notranslate"><span class="pre">pbkdf2-hmac-sha256</span></code>), <code class="docutils literal notranslate"><span class="pre">pbkdf2_params</span></code>, <code class="docutils literal notranslate"><span class="pre">recommended_pbkdf2_params</span></code>, and the registered derive implementation (cryptography <code class="docutils literal notranslate"><span class="pre">PBKDF2HMAC</span></code>). Persisted JSON must include <strong><code class="docutils literal notranslate"><span class="pre">salt</span></code></strong> (url-safe base64); <strong><code class="docutils literal notranslate"><span class="pre">iterations</span></code></strong> / <strong><code class="docutils literal notranslate"><span class="pre">length</span></code></strong> default when omitted (currently <strong>600_000</strong> iterations and <strong>32</strong> bytes for SHA-256).</p></li>
+<li><p><strong>Removed from <code class="docutils literal notranslate"><span class="pre">key_mgmt</span></code> root:</strong> <code class="docutils literal notranslate"><span class="pre">pbkdf2_hmac_sha256_params</span></code>, <code class="docutils literal notranslate"><span class="pre">KDF_NAME_PBKDF2_HMAC_SHA256</span></code>, <code class="docutils literal notranslate"><span class="pre">DEFAULT_PBKDF2_DERIVED_KEY_LENGTH</span></code> — use <code class="docutils literal notranslate"><span class="pre">kdf.pbkdf2</span></code> instead.</p></li>
+</ul>
+</section>
+<section id="sql-key-storage-and-kdf-defaults">
+<h3>SQL key storage and KDF defaults<a class="headerlink" href="#sql-key-storage-and-kdf-defaults" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.sqlalchemy.key_storage</span></code>:</strong> See API changes above. New helpers: <strong><code class="docutils literal notranslate"><span class="pre">set_kek_canary</span></code></strong>, <strong><code class="docutils literal notranslate"><span class="pre">set_app_reencrypt_pending</span></code></strong>, <strong><code class="docutils literal notranslate"><span class="pre">iter_kek_slots</span></code></strong>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">crypto</span></code>:</strong> <code class="docutils literal notranslate"><span class="pre">derive_pbkdf2_hmac_sha256</span></code> (low-level primitive), <code class="docutils literal notranslate"><span class="pre">DEFAULT_PBKDF2_ITERATIONS_STRONG</span></code>, symmetric registry / <code class="docutils literal notranslate"><span class="pre">encrypt_alg</span></code> / <code class="docutils literal notranslate"><span class="pre">generate_key_by_alg</span></code>, and <strong><code class="docutils literal notranslate"><span class="pre">recommended_data_alg()</span></code></strong> / <strong><code class="docutils literal notranslate"><span class="pre">RECOMMENDED_DATA_ALG</span></code></strong> as above.</p></li>
+</ul>
+</section>
+<section id="development">
+<h3>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Optional extra: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'gemstone_utils[dev]'</span></code> includes <strong>pytest</strong>; run <strong><code class="docutils literal notranslate"><span class="pre">pytest</span></code></strong> from the project root (<code class="docutils literal notranslate"><span class="pre">tests/</span></code>).</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-2-1">
+<h2>v0.2.1<a class="headerlink" href="#v0-2-1" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.2.1</span></code></p>
+<section id="id5">
+<h3>Overview<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>For the <strong>current stable</strong> release on this package line, use <strong><a class="reference internal" href="#v0-4-0-stable">v0.4.0</a></strong> (or newer <strong>0.4.x</strong> as published). This section documents the <strong>rename-only</strong> milestone.</p>
+<p>This release <strong>renames the distribution and Python package</strong> from <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code> to <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code></strong> (top-level package directory and <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> name). Behavior and public APIs are otherwise unchanged from v0.2.0; this is a branding and clarity update.</p>
+<p>The project homepage URL is <a class="reference external" href="https://github.com/gemstone-software-dev/gemstone_utils">github.com/gemstone-software-dev/gemstone_utils</a>. If your Git remote or older docs still reference <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code>, update them when you migrate.</p>
+</section>
+<section id="highlights">
+<h3>Highlights<a class="headerlink" href="#highlights" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Breaking — package name:</strong> PyPI/install name is <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code></strong>; import paths use the <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code></strong> package (for example <code class="docutils literal notranslate"><span class="pre">gemstone_utils.types</span></code>, <code class="docutils literal notranslate"><span class="pre">gemstone_utils.crypto</span></code>).</p></li>
+<li><p><strong>Optional extras:</strong> Use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'gemstone_utils[azure]'</span></code> instead of <code class="docutils literal notranslate"><span class="pre">emerald_utils[azure]</span></code>.</p></li>
+</ul>
+</section>
+<section id="migration-notes-from-v0-2-0-emerald-utils">
+<h3>Migration notes (from v0.2.0 / <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code>)<a class="headerlink" href="#migration-notes-from-v0-2-0-emerald-utils" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">emerald_utils</span></code> (if installed) and <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gemstone_utils</span></code> (pin <code class="docutils literal notranslate"><span class="pre">gemstone_utils==0.2.1</span></code> if you want an exact version).</p></li>
+<li><p>Replace import prefixes <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code> → <code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code> across your codebase (including experimental subpackages).</p></li>
+<li><p>Update dependency declarations (for example <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> / <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>) from <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code> to <code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code>.</p></li>
+</ol>
+<p>Encrypted data, <code class="docutils literal notranslate"><span class="pre">KeyContext</span></code>, and SQLAlchemy column behavior are unchanged; only names and install targets move.</p>
+</section>
+<section id="id6">
+<h3>Requirements<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Python ≥ 3.10</p></li>
+<li><p>Core: <code class="docutils literal notranslate"><span class="pre">cryptography</span></code> ≥ 41, <code class="docutils literal notranslate"><span class="pre">sqlalchemy</span></code> ≥ 2.0</p></li>
+<li><p>Optional: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'gemstone_utils[azure]'</span></code> for Key Vault</p></li>
+</ul>
+</section>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gemstone_utils
+</pre></div>
+</div>
+<p>Or from a GitHub release asset (after you publish <code class="docutils literal notranslate"><span class="pre">v0.2.1</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>https://github.com/gemstone-software-dev/gemstone_utils/releases/download/v0.2.1/gemstone_utils-0.2.1.tar.gz
+</pre></div>
+</div>
+</section>
+<section id="license">
+<h3>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/gemstone-software-dev/gemstone_utils/blob/main/LICENSE">Mozilla Public License 2.0 (MPL-2.0)</a></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-2-0">
+<h2>v0.2.0<a class="headerlink" href="#v0-2-0" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <code class="docutils literal notranslate"><span class="pre">v0.2.0</span></code><br />
+<strong>PyPI / import name (that release):</strong> <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code> — use <strong>v0.2.1+</strong> (<code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code>) for the renamed package.</p>
+<section id="id7">
+<h3>Overview<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<p>This release extends <strong>emerald_utils</strong> with key rotation–friendly SQLAlchemy APIs, shared types for keys and records, a small database bootstrap layer, optional Azure Key Vault resolution, pluggable secret backends, and SQL-backed leader election. Crypto gains algorithm-dispatch helpers for future symmetric algorithms; PBKDF2 derivation is renamed for accuracy (KEK vs data key).</p>
+<p>Stable areas remain <strong>crypto</strong>, <strong>encrypted fields</strong>, and <strong>SQLAlchemy</strong> integration. Experimental modules are still minimal and not the final vault design.</p>
+</section>
+<section id="id8">
+<h3>Highlights<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Breaking — <code class="docutils literal notranslate"><span class="pre">KeyContext</span></code>:</strong> Moved to <code class="docutils literal notranslate"><span class="pre">emerald_utils.types</span></code>. Fields are now <code class="docutils literal notranslate"><span class="pre">keyid</span></code>, <code class="docutils literal notranslate"><span class="pre">key</span></code>, and optional <code class="docutils literal notranslate"><span class="pre">alg</span></code> (default <code class="docutils literal notranslate"><span class="pre">&quot;A256GCM&quot;</span></code>). The former <code class="docutils literal notranslate"><span class="pre">dk</span></code> field is <strong><code class="docutils literal notranslate"><span class="pre">key</span></code></strong>.</p></li>
+<li><p><strong>Breaking — KDF helper:</strong> <code class="docutils literal notranslate"><span class="pre">derive_dk_from_passphrase</span></code> in <code class="docutils literal notranslate"><span class="pre">emerald_utils.crypto</span></code> is renamed to <strong><code class="docutils literal notranslate"><span class="pre">derive_kek_from_passphrase</span></code></strong>.</p></li>
+<li><p><strong>Breaking — <code class="docutils literal notranslate"><span class="pre">EncryptedString</span></code>:</strong> Replaces <code class="docutils literal notranslate"><span class="pre">set_keyctx()</span></code> with <strong><code class="docutils literal notranslate"><span class="pre">set_current_keyctx()</span></code></strong> for the active write key and <strong><code class="docutils literal notranslate"><span class="pre">set_keyctx_resolver(callable)</span></code></strong> to resolve the correct <code class="docutils literal notranslate"><span class="pre">KeyContext</span></code> per stored <code class="docutils literal notranslate"><span class="pre">keyid</span></code> on read (supports rotation and multiple keys).</p></li>
+<li><p><strong>Crypto:</strong> <code class="docutils literal notranslate"><span class="pre">encrypt_with_alg</span></code> / <code class="docutils literal notranslate"><span class="pre">decrypt_with_alg</span></code> for JWA-style symmetric dispatch (currently <code class="docutils literal notranslate"><span class="pre">A256GCM</span></code>); fixes that blocked correct key rotation behavior.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">KeyRecord</span></code>:</strong> New type in <code class="docutils literal notranslate"><span class="pre">emerald_utils.types</span></code> for encrypted key material (<code class="docutils literal notranslate"><span class="pre">keyid</span></code>, <code class="docutils literal notranslate"><span class="pre">alg</span></code>, <code class="docutils literal notranslate"><span class="pre">encrypted_key</span></code>).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">key_mgmt</span></code>:</strong> KEK verification (<code class="docutils literal notranslate"><span class="pre">KEKVerificationError</span></code>), KDF registry (<code class="docutils literal notranslate"><span class="pre">register_kdf</span></code>, <code class="docutils literal notranslate"><span class="pre">derive_kek</span></code>), wrap/unwrap, and helpers to build <code class="docutils literal notranslate"><span class="pre">KeyContext</span></code> from stored records (replaces the old <code class="docutils literal notranslate"><span class="pre">dk.py</span></code> direction).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">emerald_utils.db</span></code>:</strong> Central DB setup with <strong>dynamic schema registration</strong> so modules and plugins can attach their own SQLAlchemy metadata.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">emerald_utils.election</span></code>:</strong> Optional SQL-backed <strong>leader election</strong> (candidates, heartbeats, leases, namespaces).</p></li>
+<li><p><strong>Experimental — <code class="docutils literal notranslate"><span class="pre">azexp:</span></code>:</strong> Azure Key Vault URLs via <code class="docutils literal notranslate"><span class="pre">emerald_utils.experimental.azexp_backend</span></code>; install <strong><code class="docutils literal notranslate"><span class="pre">emerald_utils[azure]</span></code></strong> (<code class="docutils literal notranslate"><span class="pre">azure-identity</span></code>, <code class="docutils literal notranslate"><span class="pre">azure-keyvault-secrets</span></code>).</p></li>
+<li><p><strong>Experimental — <code class="docutils literal notranslate"><span class="pre">secrets_resolver</span></code>:</strong> Pluggable backends with register/unregister; caching refined for env, file, and secret sources; README updated for current backend usage.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">sqlexp</span></code> / <code class="docutils literal notranslate"><span class="pre">sqlexp_backend</span></code>:</strong> Fixes for handling older keys; backend wiring updates for the new DB and resolver patterns.</p></li>
+</ul>
+</section>
+<section id="migration-notes-from-v0-1-0">
+<h3>Migration notes (from v0.1.0)<a class="headerlink" href="#migration-notes-from-v0-1-0" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Import <code class="docutils literal notranslate"><span class="pre">KeyContext</span></code> from <code class="docutils literal notranslate"><span class="pre">emerald_utils.types</span></code> (not <code class="docutils literal notranslate"><span class="pre">encrypted_fields</span></code>). Replace <code class="docutils literal notranslate"><span class="pre">keyctx.dk</span></code> with <code class="docutils literal notranslate"><span class="pre">keyctx.key</span></code>; set <code class="docutils literal notranslate"><span class="pre">alg</span></code> if you need a non-default algorithm.</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">derive_dk_from_passphrase(...)</span></code> with <code class="docutils literal notranslate"><span class="pre">derive_kek_from_passphrase(...)</span></code>.</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">EncryptedString.set_keyctx(ctx)</span></code> with <code class="docutils literal notranslate"><span class="pre">EncryptedString.set_current_keyctx(ctx)</span></code> and implement <code class="docutils literal notranslate"><span class="pre">EncryptedString.set_keyctx_resolver(lambda</span> <span class="pre">keyid:</span> <span class="pre">...)</span></code> so reads can decrypt rows written with other key IDs.</p></li>
+</ol>
+</section>
+<section id="id9">
+<h3>Requirements<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Python ≥ 3.10</p></li>
+<li><p>Core: <code class="docutils literal notranslate"><span class="pre">cryptography</span></code> ≥ 41, <code class="docutils literal notranslate"><span class="pre">sqlalchemy</span></code> ≥ 2.0</p></li>
+<li><p>Optional: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'emerald_utils[azure]'</span></code> for Key Vault</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>Installation<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>emerald_utils
+</pre></div>
+</div>
+<p>Or from a GitHub release asset (after you publish <code class="docutils literal notranslate"><span class="pre">v0.2.0</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>https://github.com/gemstone-software-dev/gemstone_utils/releases/download/v0.2.0/emerald_utils-0.2.0.tar.gz
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>License<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/gemstone-software-dev/gemstone_utils/blob/main/LICENSE">Mozilla Public License 2.0 (MPL-2.0)</a></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="v0-1-0">
+<h2>v0.1.0<a class="headerlink" href="#v0-1-0" title="Link to this heading">¶</a></h2>
+<p><strong>Tag:</strong> <a class="reference external" href="https://github.com/gemstone-software-dev/gemstone_utils/releases/tag/v0.1.0"><code class="docutils literal notranslate"><span class="pre">v0.1.0</span></code></a><br />
+<strong>Commit:</strong> <code class="docutils literal notranslate"><span class="pre">271bd51</span></code><br />
+<strong>Released:</strong> 15 Mar 2026 (per <a class="reference external" href="https://github.com/gemstone-software-dev/gemstone_utils/releases/tag/v0.1.0">GitHub release</a>)</p>
+<section id="id12">
+<h3>Overview<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
+<p>First public version of <strong>emerald_utils</strong>: a small, dependency-light utility library with AES-GCM helpers, PBKDF2 key derivation, a standard encrypted-field format, transparent SQLAlchemy encrypted columns, and an experimental secret resolver plus minimal SQL backend.</p>
+<p>Stable components (crypto, encrypted fields, SQLAlchemy) are intended for long-term use. Experimental pieces are intentionally minimal and not part of the future vault/meta-manager.</p>
+</section>
+<section id="included-artifacts">
+<h3>Included artifacts<a class="headerlink" href="#included-artifacts" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Source distribution (<code class="docutils literal notranslate"><span class="pre">emerald_utils-&lt;version&gt;.tar.gz</span></code>) — <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&lt;url&gt;</span></code></p></li>
+<li><p>Wheel (<code class="docutils literal notranslate"><span class="pre">emerald_utils-&lt;version&gt;-py3-none-any.whl</span></code>)</p></li>
+</ul>
+</section>
+<section id="id13">
+<h3>Installation<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>https://github.com/gemstone-software-dev/gemstone_utils/releases/download/v0.1.0/emerald_utils-0.1.0.tar.gz
+</pre></div>
+</div>
+<p>Or from a clone:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h3>Highlights<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<section id="cryptography">
+<h4>Cryptography<a class="headerlink" href="#cryptography" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>AES-256-GCM encryption and decryption</p></li>
+<li><p>PBKDF2-HMAC-SHA256 key derivation</p></li>
+<li><p>URL-safe base64 helpers</p></li>
+</ul>
+</section>
+<section id="encrypted-fields">
+<h4>Encrypted fields<a class="headerlink" href="#encrypted-fields" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">$A256GCM$keyid$base64</span></code> format</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">KeyContext</span></code> for data key + keyid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">encrypt_string()</span></code> / <code class="docutils literal notranslate"><span class="pre">decrypt_string()</span></code></p></li>
+</ul>
+</section>
+<section id="sqlalchemy-integration">
+<h4>SQLAlchemy integration<a class="headerlink" href="#sqlalchemy-integration" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">EncryptedString</span></code> TypeDecorator</p></li>
+<li><p>Lazy decryption via <code class="docutils literal notranslate"><span class="pre">LazySecret</span></code></p></li>
+<li><p>Prevents double-encryption</p></li>
+<li><p>Central <code class="docutils literal notranslate"><span class="pre">set_keyctx()</span></code> initialization</p></li>
+</ul>
+</section>
+<section id="experimental-secret-resolver">
+<h4>Experimental secret resolver<a class="headerlink" href="#experimental-secret-resolver" title="Link to this heading">¶</a></h4>
+<p>Supports:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">env:</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file:</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">secret:</span></code> (systemd + container orchestrators)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sqlexp:</span></code></p></li>
+<li><p>Encrypted values</p></li>
+</ul>
+</section>
+<section id="experimental-sql-backend-sqlexp">
+<h4>Experimental SQL backend (<code class="docutils literal notranslate"><span class="pre">sqlexp</span></code>)<a class="headerlink" href="#experimental-sql-backend-sqlexp" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Simple key/value table</p></li>
+<li><p>Stores encrypted values</p></li>
+<li><p>Intended for bootstrap use only</p></li>
+</ul>
+</section>
+</section>
+<section id="id15">
+<h3>License<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<p>Mozilla Public License 2.0 (MPL-2.0). You may use this library in proprietary applications; modifications to this library must remain MPL-licensed.</p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="reference/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">API reference</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="secrets-resolver.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Experimental secrets resolver</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Gemstone Software
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">gemstone_utils release notes</a><ul>
+<li><a class="reference internal" href="#pre-release-naming-gemstone-utils">Pre-release naming (gemstone_utils)</a></li>
+<li><a class="reference internal" href="#unreleased">Unreleased</a><ul>
+<li><a class="reference internal" href="#v0-5-0-unreleased">v0.5.0 (unreleased)</a><ul>
+<li><a class="reference internal" href="#breaking-changes">Breaking changes</a></li>
+<li><a class="reference internal" href="#migration">Migration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-4-1">v0.4.1</a><ul>
+<li><a class="reference internal" href="#fixes">Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-4-0-stable">v0.4.0 (stable)</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-4-0rc1-release-candidate">v0.4.0rc1 (release candidate)</a><ul>
+<li><a class="reference internal" href="#id1">Overview</a></li>
+<li><a class="reference internal" href="#changes-since-v0-3-0a2">Changes since v0.3.0a2</a><ul>
+<li><a class="reference internal" href="#id2">Breaking changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-3-0a2-alpha">v0.3.0a2 (alpha)</a><ul>
+<li><a class="reference internal" href="#id3">Overview</a></li>
+<li><a class="reference internal" href="#changes-since-v0-3-0a1">Changes since v0.3.0a1</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-3-0a1-alpha">v0.3.0a1 (alpha)</a><ul>
+<li><a class="reference internal" href="#id4">Overview</a></li>
+<li><a class="reference internal" href="#encrypted-field-wire-format">Encrypted field wire format</a></li>
+<li><a class="reference internal" href="#api-changes-breaking">API changes (breaking)</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#key-mgmt-package-and-kdf-registry"><code class="docutils literal notranslate"><span class="pre">key_mgmt</span></code> package and KDF registry</a></li>
+<li><a class="reference internal" href="#sql-key-storage-and-kdf-defaults">SQL key storage and KDF defaults</a></li>
+<li><a class="reference internal" href="#development">Development</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-2-1">v0.2.1</a><ul>
+<li><a class="reference internal" href="#id5">Overview</a></li>
+<li><a class="reference internal" href="#highlights">Highlights</a></li>
+<li><a class="reference internal" href="#migration-notes-from-v0-2-0-emerald-utils">Migration notes (from v0.2.0 / <code class="docutils literal notranslate"><span class="pre">emerald_utils</span></code>)</a></li>
+<li><a class="reference internal" href="#id6">Requirements</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-2-0">v0.2.0</a><ul>
+<li><a class="reference internal" href="#id7">Overview</a></li>
+<li><a class="reference internal" href="#id8">Highlights</a></li>
+<li><a class="reference internal" href="#migration-notes-from-v0-1-0">Migration notes (from v0.1.0)</a></li>
+<li><a class="reference internal" href="#id9">Requirements</a></li>
+<li><a class="reference internal" href="#id10">Installation</a></li>
+<li><a class="reference internal" href="#id11">License</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v0-1-0">v0.1.0</a><ul>
+<li><a class="reference internal" href="#id12">Overview</a></li>
+<li><a class="reference internal" href="#included-artifacts">Included artifacts</a></li>
+<li><a class="reference internal" href="#id13">Installation</a></li>
+<li><a class="reference internal" href="#id14">Highlights</a><ul>
+<li><a class="reference internal" href="#cryptography">Cryptography</a></li>
+<li><a class="reference internal" href="#encrypted-fields">Encrypted fields</a></li>
+<li><a class="reference internal" href="#sqlalchemy-integration">SQLAlchemy integration</a></li>
+<li><a class="reference internal" href="#experimental-secret-resolver">Experimental secret resolver</a></li>
+<li><a class="reference internal" href="#experimental-sql-backend-sqlexp">Experimental SQL backend (<code class="docutils literal notranslate"><span class="pre">sqlexp</span></code>)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id15">License</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=6c02275b"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

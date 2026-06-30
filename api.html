@@ -1,0 +1,469 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="SQLAlchemy encrypted columns" href="sqlalchemy.html"><link rel="prev" title="gemstone_utils" href="index.html">
+        <link rel="canonical" href="https://gemstone-software-dev.github.io/gemstone_utils/api.html">
+        <link rel="prefetch" href="_static/gemstone_software_logo_full_cropped.png" as="image">
+        <link rel="prefetch" href="_static/gemstone_software_logo_full_cropped.png" as="image">
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2025.12.19 -->
+        <title>Public API guide - gemstone_utils</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=62be05a3" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  --font-stack: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-stack--monospace: "Source Code Pro", ui-monospace, monospace;
+  --color-gemstone-heading-border: #6D28D9;
+  --color-sidebar-background: #f3eef8;
+  --color-table-header-background: var(--color-sidebar-background);
+  --color-code-background: #f0edf4;
+  --color-gemstone-target-accent: #7C3AED;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --font-stack: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-stack--monospace: "Source Code Pro", ui-monospace, monospace;
+  --color-gemstone-heading-border: #A78BFA;
+  --color-sidebar-background: #150d1f;
+  --color-table-header-background: #1f1530;
+  --color-gemstone-target-accent: #C4B5FD;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --font-stack: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-stack--monospace: "Source Code Pro", ui-monospace, monospace;
+  --color-gemstone-heading-border: #A78BFA;
+  --color-sidebar-background: #150d1f;
+  --color-table-header-background: #1f1530;
+  --color-gemstone-target-accent: #C4B5FD;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">gemstone_utils</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/gemstone_software_logo_full_cropped.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/gemstone_software_logo_full_cropped.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">gemstone_utils</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Public API guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sqlalchemy.html">SQLAlchemy encrypted columns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="key-storage.html">SQL key storage (<code class="docutils literal notranslate"><span class="pre">sqlalchemy.key_storage</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="election.html">SQL-backed leader election (<code class="docutils literal notranslate"><span class="pre">gemstone_utils.election</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="secrets-resolver.html">Experimental secrets resolver</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">gemstone_utils release notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API reference</a><input aria-label="Toggle navigation of API reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/crypto.html">gemstone_utils.crypto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_id.html">gemstone_utils.key_id</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/types.html">gemstone_utils.types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/encrypted_fields.html">gemstone_utils.encrypted_fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_mgmt.html">gemstone_utils.key_mgmt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_mgmt_registry.html">gemstone_utils.key_mgmt.registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/key_mgmt_kdf.html">gemstone_utils.key_mgmt.kdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/db.html">gemstone_utils.db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/election.html">gemstone_utils.election</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/sqlalchemy_encrypted_type.html">gemstone_utils.sqlalchemy.encrypted_type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/sqlalchemy_lazy_secret.html">gemstone_utils.sqlalchemy.lazy_secret</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/sqlalchemy_key_storage.html">gemstone_utils.sqlalchemy.key_storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/secrets_resolver.html">gemstone_utils.experimental.secrets_resolver</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/api.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="public-api-guide">
+<h1>Public API guide<a class="headerlink" href="#public-api-guide" title="Link to this heading">¶</a></h1>
+<p>How to use <strong>stable, intended</strong> entry points in <code class="docutils literal notranslate"><span class="pre">gemstone_utils</span></code>. This page focuses on integration patterns and where to go next — not an exhaustive symbol list.</p>
+<p>Per-function and per-class reference material lives in the <strong><a class="reference internal" href="reference/index.html"><span class="std std-doc">API reference</span></a></strong> section, generated from Google-style docstrings on the public modules. Use <code class="docutils literal notranslate"><span class="pre">help()</span></code> in Python or your IDE for inline docs.</p>
+<section id="documentation-map">
+<h2>Documentation map<a class="headerlink" href="#documentation-map" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Area</p></th>
+<th class="head"><p>Module(s)</p></th>
+<th class="head"><p>Usage guide</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Encrypted SQLAlchemy columns</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlalchemy.encrypted_type</span></code>, <code class="docutils literal notranslate"><span class="pre">lazy_secret</span></code></p></td>
+<td><p><a class="reference internal" href="sqlalchemy.html"><span class="std std-doc">sqlalchemy.md</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Persisted keys and rotation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlalchemy.key_storage</span></code>, <code class="docutils literal notranslate"><span class="pre">key_mgmt</span></code>, <code class="docutils literal notranslate"><span class="pre">db</span></code></p></td>
+<td><p><a class="reference internal" href="key-storage.html"><span class="std std-doc">key-storage.md</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Leader election</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">election</span></code>, <code class="docutils literal notranslate"><span class="pre">db</span></code></p></td>
+<td><p><a class="reference internal" href="election.html"><span class="std std-doc">election.md</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Config secret references</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">experimental.secrets_resolver</span></code></p></td>
+<td><p><a class="reference internal" href="secrets-resolver.html"><span class="std std-doc">secrets-resolver.md</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Breaking changes</p></td>
+<td><p>—</p></td>
+<td><p><a class="reference internal" href="release-notes.html"><span class="std std-doc">release-notes.md</span></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="typical-bootstrap-order">
+<h2>Typical bootstrap order<a class="headerlink" href="#typical-bootstrap-order" title="Link to this heading">¶</a></h2>
+<p>Applications that use encrypted columns <strong>and</strong> persisted keys usually wire things in this order:</p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">init_db(db_url)</span></code></strong> — after importing every module that defines <code class="docutils literal notranslate"><span class="pre">GemstoneDB</span></code> subclasses (<code class="docutils literal notranslate"><span class="pre">key_storage</span></code>, <code class="docutils literal notranslate"><span class="pre">election</span></code>, app plugins).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">key_mgmt.init(...)</span></code></strong> — secret name and KEK-check plaintext for passphrase verification.</p></li>
+<li><p><strong>Persisted keys</strong> — <code class="docutils literal notranslate"><span class="pre">set_kdf_params</span></code>, <code class="docutils literal notranslate"><span class="pre">set_kek_canary</span></code>, <code class="docutils literal notranslate"><span class="pre">put_keyrecord</span></code> (see <a class="reference internal" href="key-storage.html"><span class="std std-doc">key-storage.md</span></a>).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">EncryptedString.set_current_keyctx</span></code></strong> — active DEK for new writes.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">EncryptedString.set_keyctx_resolver</span></code></strong> — often <code class="docutils literal notranslate"><span class="pre">make_keyctx_resolver()</span></code> from <code class="docutils literal notranslate"><span class="pre">key_storage</span></code>.</p></li>
+<li><p><strong>Optional:</strong> <code class="docutils literal notranslate"><span class="pre">secrets_resolver.set_keyctx_resolver</span></code> if config values use encrypted wires; <code class="docutils literal notranslate"><span class="pre">set_allowed_file_path_prefixes</span></code> for non-container <code class="docutils literal notranslate"><span class="pre">file:</span></code> paths.</p></li>
+</ol>
+<p>For election-only or resolver-only apps, skip the steps that do not apply.</p>
+</section>
+<section id="cryptography-and-encrypted-fields">
+<h2>Cryptography and encrypted fields<a class="headerlink" href="#cryptography-and-encrypted-fields" title="Link to this heading">¶</a></h2>
+<p>Use <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.crypto</span></code></strong> for algorithm dispatch (<code class="docutils literal notranslate"><span class="pre">encrypt_alg</span></code> / <code class="docutils literal notranslate"><span class="pre">decrypt_alg</span></code>, <code class="docutils literal notranslate"><span class="pre">generate_key_by_alg</span></code>, <code class="docutils literal notranslate"><span class="pre">recommended_data_alg</span></code>) and <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.encrypted_fields</span></code></strong> for the <code class="docutils literal notranslate"><span class="pre">$alg$keyid$params$blob</span></code> wire format (<code class="docutils literal notranslate"><span class="pre">encrypt_string</span></code>, <code class="docutils literal notranslate"><span class="pre">decrypt_string</span></code>).</p>
+<p>Generate new logical key ids with <strong><code class="docutils literal notranslate"><span class="pre">new_key_id()</span></code></strong> (UUIDv7). Pass <strong><code class="docutils literal notranslate"><span class="pre">KeyContext</span></code></strong> (<code class="docutils literal notranslate"><span class="pre">keyid</span></code>, <code class="docutils literal notranslate"><span class="pre">key</span></code>, <code class="docutils literal notranslate"><span class="pre">alg</span></code>) into encrypt helpers; use <strong><code class="docutils literal notranslate"><span class="pre">KeyRecord</span></code></strong> when wrapping DEKs under a KEK.</p>
+</section>
+<section id="key-management">
+<h2>Key management<a class="headerlink" href="#key-management" title="Link to this heading">¶</a></h2>
+<p><strong><code class="docutils literal notranslate"><span class="pre">derive_kek(passphrase,</span> <span class="pre">params)</span></code></strong> uses persisted JSON (<code class="docutils literal notranslate"><span class="pre">params[&quot;kdf&quot;]</span></code>) as the source of truth. New installs should use <strong><code class="docutils literal notranslate"><span class="pre">recommended_kdf_params()</span></code></strong> or <strong><code class="docutils literal notranslate"><span class="pre">kdf.pbkdf2.recommended_pbkdf2_params</span></code></strong>.</p>
+<p>Verify passphrases with <strong><code class="docutils literal notranslate"><span class="pre">derive_and_verify_kek</span></code></strong> and KEK-check records (<code class="docutils literal notranslate"><span class="pre">make_kek_check_record</span></code>, <code class="docutils literal notranslate"><span class="pre">verify_kek</span></code>). Rotate with <strong><code class="docutils literal notranslate"><span class="pre">rotate_kek</span></code></strong> or persisted <strong><code class="docutils literal notranslate"><span class="pre">rewrap_key_records</span></code></strong>.</p>
+<p>Load passphrases via <strong><code class="docutils literal notranslate"><span class="pre">load_passphrase()</span></code></strong> (secret mount, optional env fallback).</p>
+</section>
+<section id="sqlalchemy-encrypted-columns">
+<h2>SQLAlchemy encrypted columns<a class="headerlink" href="#sqlalchemy-encrypted-columns" title="Link to this heading">¶</a></h2>
+<p>Declare columns as <strong><code class="docutils literal notranslate"><span class="pre">EncryptedString</span></code></strong>. Reads return <strong><code class="docutils literal notranslate"><span class="pre">LazySecret</span></code></strong> — call <strong><code class="docutils literal notranslate"><span class="pre">str(value)</span></code></strong> or <strong><code class="docutils literal notranslate"><span class="pre">value.get()</span></code></strong> to decrypt. Do not assign already-encrypted strings on write.</p>
+<p>See <a class="reference internal" href="sqlalchemy.html"><span class="std std-doc">sqlalchemy.md</span></a> for init order, rotation, and failure modes.</p>
+</section>
+<section id="sql-key-storage">
+<h2>SQL key storage<a class="headerlink" href="#sql-key-storage" title="Link to this heading">¶</a></h2>
+<p><strong><code class="docutils literal notranslate"><span class="pre">GemstoneKeyKdf</span></code></strong> rows hold KDF JSON and the KEK canary; <strong><code class="docutils literal notranslate"><span class="pre">GemstoneKeyRecord</span></code></strong> rows hold wrapped DEKs only. Segment 2 in application ciphertext is the <strong>DEK id</strong>; segment 2 in <code class="docutils literal notranslate"><span class="pre">wrapped</span></code> is the <strong>KEK slot id</strong> — do not confuse them.</p>
+<p>See <a class="reference internal" href="key-storage.html"><span class="std std-doc">key-storage.md</span></a> for bootstrap, <code class="docutils literal notranslate"><span class="pre">make_keyctx_resolver</span></code>, and <code class="docutils literal notranslate"><span class="pre">rewrap_key_records</span></code>.</p>
+</section>
+<section id="database-layer">
+<h2>Database layer<a class="headerlink" href="#database-layer" title="Link to this heading">¶</a></h2>
+<p><strong><code class="docutils literal notranslate"><span class="pre">GemstoneDB</span></code></strong> is the shared declarative base. <strong><code class="docutils literal notranslate"><span class="pre">init_db</span></code></strong> creates missing tables for all registered models; <strong><code class="docutils literal notranslate"><span class="pre">get_session</span></code></strong> returns sessions for helpers and app code.</p>
+</section>
+<section id="leader-election">
+<h2>Leader election<a class="headerlink" href="#leader-election" title="Link to this heading">¶</a></h2>
+<p>Optional multi-worker leader leases: <strong><code class="docutils literal notranslate"><span class="pre">register_candidate</span></code></strong>, periodic <strong><code class="docutils literal notranslate"><span class="pre">heartbeat</span></code></strong> and <strong><code class="docutils literal notranslate"><span class="pre">elect</span></code></strong>, gate work with <strong><code class="docutils literal notranslate"><span class="pre">is_leader</span></code></strong>. Import <strong><code class="docutils literal notranslate"><span class="pre">gemstone_utils.election</span></code></strong> before <strong><code class="docutils literal notranslate"><span class="pre">init_db</span></code></strong>.</p>
+<p>See <a class="reference internal" href="election.html"><span class="std std-doc">election.md</span></a> for protocol rules and limitations.</p>
+</section>
+<section id="experimental-secrets-resolver">
+<h2>Experimental secrets resolver<a class="headerlink" href="#experimental-secrets-resolver" title="Link to this heading">¶</a></h2>
+<p><strong><code class="docutils literal notranslate"><span class="pre">resolve_secret</span></code></strong> is the single entry point for <code class="docutils literal notranslate"><span class="pre">env:</span></code>, <code class="docutils literal notranslate"><span class="pre">file:</span></code>, <code class="docutils literal notranslate"><span class="pre">secret:</span></code>, <code class="docutils literal notranslate"><span class="pre">literal:</span></code>, plugins, and encrypted wires. Register custom prefixes with <strong><code class="docutils literal notranslate"><span class="pre">register_backend</span></code></strong>; introspect with <strong><code class="docutils literal notranslate"><span class="pre">list_backends</span></code></strong>.</p>
+<p>Not a full secrets manager — see <a class="reference internal" href="secrets-resolver.html"><span class="std std-doc">secrets-resolver.md</span></a>.</p>
+</section>
+<section id="api-reference">
+<h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
+<p>Public modules use <strong>Google-style docstrings</strong> (<code class="docutils literal notranslate"><span class="pre">Args</span></code>, <code class="docutils literal notranslate"><span class="pre">Returns</span></code>, <code class="docutils literal notranslate"><span class="pre">Raises</span></code>, <code class="docutils literal notranslate"><span class="pre">Attributes</span></code>). The exhaustive symbol index is in the separate <strong><a class="reference internal" href="reference/index.html"><span class="std std-doc">API reference</span></a></strong> section. <strong>This page remains the usage guide</strong>; autodoc is the per-module index.</p>
+<p>Modules covered: <code class="docutils literal notranslate"><span class="pre">crypto</span></code>, <code class="docutils literal notranslate"><span class="pre">key_id</span></code>, <code class="docutils literal notranslate"><span class="pre">types</span></code>, <code class="docutils literal notranslate"><span class="pre">encrypted_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">key_mgmt</span></code> (+ <code class="docutils literal notranslate"><span class="pre">registry</span></code>, <code class="docutils literal notranslate"><span class="pre">kdf</span></code>), <code class="docutils literal notranslate"><span class="pre">sqlalchemy.encrypted_type</span></code>, <code class="docutils literal notranslate"><span class="pre">sqlalchemy.lazy_secret</span></code>, <code class="docutils literal notranslate"><span class="pre">sqlalchemy.key_storage</span></code>, <code class="docutils literal notranslate"><span class="pre">db</span></code>, <code class="docutils literal notranslate"><span class="pre">election</span></code>, <code class="docutils literal notranslate"><span class="pre">experimental.secrets_resolver</span></code>.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="sqlalchemy.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SQLAlchemy encrypted columns</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Gemstone Software
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Public API guide</a><ul>
+<li><a class="reference internal" href="#documentation-map">Documentation map</a></li>
+<li><a class="reference internal" href="#typical-bootstrap-order">Typical bootstrap order</a></li>
+<li><a class="reference internal" href="#cryptography-and-encrypted-fields">Cryptography and encrypted fields</a></li>
+<li><a class="reference internal" href="#key-management">Key management</a></li>
+<li><a class="reference internal" href="#sqlalchemy-encrypted-columns">SQLAlchemy encrypted columns</a></li>
+<li><a class="reference internal" href="#sql-key-storage">SQL key storage</a></li>
+<li><a class="reference internal" href="#database-layer">Database layer</a></li>
+<li><a class="reference internal" href="#leader-election">Leader election</a></li>
+<li><a class="reference internal" href="#experimental-secrets-resolver">Experimental secrets resolver</a></li>
+<li><a class="reference internal" href="#api-reference">API reference</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=6c02275b"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>
