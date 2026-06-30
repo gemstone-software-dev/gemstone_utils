@@ -20,7 +20,7 @@ Writes only need the current key. Reads need the resolver to map **historical** 
 
 ## Key ids are strings (UUIDs)
 
-`KeyContext.keyid` and the resolver argument are **`str`**, canonical UUID text (typically UUIDv7 from `new_key_id()`). Integer key ids in legacy data are not accepted by current parsers; see [RELEASE_NOTES.md](../RELEASE_NOTES.md) and [key-storage.md](key-storage.md#key-ids-and-wire-format).
+`KeyContext.keyid` and the resolver argument are **`str`**, canonical UUID text (typically UUIDv7 from `new_key_id()`). Integer key ids in legacy data are not accepted by current parsers; see [release-notes.md](release-notes.md) and [key-storage.md](key-storage.md#key-ids-and-wire-format).
 
 ## Rotation behavior
 

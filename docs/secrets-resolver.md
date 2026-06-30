@@ -2,7 +2,7 @@
 
 The module `gemstone_utils.experimental.secrets_resolver` resolves string references to secret values (environment, files, container secret mounts, literals, and optional plugins). It is intended for **configuration bootstrap** (for example Pydantic `BeforeValidator`), not as a full secrets manager.
 
-**Stability:** Experimental. The API and behavior may change; see [README.md](../README.md#experimental-components).
+**Stability:** Experimental. The API and behavior may change; see the [Experimental components](https://github.com/gemstone-software-dev/gemstone_utils#experimental-components) section in the repository README.
 
 ## Schemes
 
@@ -67,4 +67,4 @@ If the resolved string looks like an encrypted field (`is_encrypted_prefix`), it
 - **`env:` scrubbing** removes variables after first read; behavior is process-global.
 - **Caching** applies to env, file, and secret paths; treat the process as holding secrets in memory.
 
-For backend-specific details, see [README.md](../README.md#secret-resolver-backends).
+For backend-specific details, see [Secret resolver backends](https://github.com/gemstone-software-dev/gemstone_utils#secret-resolver-backends) in the repository README.

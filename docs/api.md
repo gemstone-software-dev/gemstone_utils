@@ -2,7 +2,7 @@
 
 How to use **stable, intended** entry points in `gemstone_utils`. This page focuses on integration patterns and where to go next — not an exhaustive symbol list.
 
-Per-function and per-class reference material lives in **Google-style docstrings** on the public modules (suitable for Sphinx or MkDocs autodoc when you add a reference build). Use `help()` in Python or your IDE for inline docs.
+Per-function and per-class reference material lives in the **[API reference](reference/index.md)** section, generated from Google-style docstrings on the public modules. Use `help()` in Python or your IDE for inline docs.
 
 ## Documentation map
 
@@ -12,7 +12,7 @@ Per-function and per-class reference material lives in **Google-style docstrings
 | Persisted keys and rotation | `sqlalchemy.key_storage`, `key_mgmt`, `db` | [key-storage.md](key-storage.md) |
 | Leader election | `election`, `db` | [election.md](election.md) |
 | Config secret references | `experimental.secrets_resolver` | [secrets-resolver.md](secrets-resolver.md) |
-| Breaking changes | — | [RELEASE_NOTES.md](../RELEASE_NOTES.md) |
+| Breaking changes | — | [release-notes.md](release-notes.md) |
 
 ## Typical bootstrap order
 
@@ -69,8 +69,8 @@ See [election.md](election.md) for protocol rules and limitations.
 
 Not a full secrets manager — see [secrets-resolver.md](secrets-resolver.md).
 
-## API reference (autodoc)
+## API reference
 
-Public modules use **Google-style docstrings** (`Args`, `Returns`, `Raises`, `Attributes`). When you add Sphinx or MkDocs with autodoc/mkdocstrings, generate the full symbol reference from those docstrings and link it here (for example on Read the Docs or GitHub Pages). **`api.md` remains the usage guide**; autodoc is the exhaustive index.
+Public modules use **Google-style docstrings** (`Args`, `Returns`, `Raises`, `Attributes`). The exhaustive symbol index is in the separate **[API reference](reference/index.md)** section. **This page remains the usage guide**; autodoc is the per-module index.
 
 Modules covered: `crypto`, `key_id`, `types`, `encrypted_fields`, `key_mgmt` (+ `registry`, `kdf`), `sqlalchemy.encrypted_type`, `sqlalchemy.lazy_secret`, `sqlalchemy.key_storage`, `db`, `election`, `experimental.secrets_resolver`.

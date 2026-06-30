@@ -70,6 +70,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/sphinx_config/_static/gemstone_software_logo_full_cropped.png
 
 # PyBuilder
 .pybuilder/

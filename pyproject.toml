@@ -24,9 +24,19 @@ dev = [
     "pytest>=7.0",
     "psycopg[binary]>=3.1",
 ]
+docs = [
+    "sphinx>=7.0,<9",
+    "myst-parser>=2.0,<4",
+    "furo>=2024.0.0",
+    "sphinx-copybutton>=0.5",
+    "sphinx-design>=0.5",
+    "Pillow>=10.0",
+    "sphinxcontrib-mermaid>=0.9",
+]
 
 [project.urls]
 Homepage = "https://github.com/gemstone-software-dev/gemstone_utils"
+Documentation = "https://gemstone-software-dev.github.io/gemstone_utils/"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

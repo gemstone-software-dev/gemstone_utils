@@ -6,6 +6,8 @@ The package is licensed under the **MPL‑2.0**, allowing use in both open‑sou
 
 ## Documentation
 
+Full documentation (user guides, release notes, and API reference): **[gemstone-software-dev.github.io/gemstone_utils](https://gemstone-software-dev.github.io/gemstone_utils/)**
+
 | Topic | Guide |
 |--------|--------|
 | SQLAlchemy `EncryptedString`, init order, rotation | [docs/sqlalchemy.md](docs/sqlalchemy.md) |
@@ -15,6 +17,8 @@ The package is licensed under the **MPL‑2.0**, allowing use in both open‑sou
 | Curated public API (stable vs experimental) | [docs/api.md](docs/api.md) |
 
 Breaking changes and migration (including UUID key ids): [RELEASE_NOTES.md](RELEASE_NOTES.md). A data-migration outline for key ids: [scripts/migrate_key_ids.py](scripts/migrate_key_ids.py).
+
+Build docs locally: `pip install -e ".[docs]"` then `make -C docs/sphinx_config html` (output in `docs/_build/html/`).
 
 ---
 

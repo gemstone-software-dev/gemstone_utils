@@ -13,7 +13,7 @@ Import the module to register models on the shared `GemstoneDB` base (see `gemst
 | **Leader lease** | Row in `gemstone_election_leader` with `leader_id` and `lease_expires_at`. Renewed by `elect` when the caller is (or becomes) leader. |
 | **Expiry window** | `set_expire(sec)` (default **60** seconds) extends both candidate `expires_at` and leader `lease_expires_at` on each qualifying call. |
 
-```mermaid
+```{mermaid}
 sequenceDiagram
     participant App
     participant DB as gemstone_election_*
@@ -84,4 +84,4 @@ All public functions accept an optional `session=` so you can share a transactio
 
 ## Public API
 
-See [api.md](api.md#leader-election-gemstone_utilselection). Related: [key-storage.md](key-storage.md) (shared `init_db` and `GemstoneDB` pattern). Introduced in v0.2.0 as `emerald_utils.election`; see [RELEASE_NOTES.md](../RELEASE_NOTES.md).
+See [api.md](api.md#leader-election). Related: [key-storage.md](key-storage.md) (shared `init_db` and `GemstoneDB` pattern). Introduced in v0.2.0 as `emerald_utils.election`; see [release-notes.md](release-notes.md).

@@ -6,7 +6,7 @@ Import the module to register models on the shared `GemstoneDB` base (see `gemst
 
 ## Two meanings of “key id” in wire strings
 
-The five-part format is `$<alg>$<segment2>$<params_b64>$<blob_b64>` (see [RELEASE_NOTES.md](../RELEASE_NOTES.md)). **Segment 2 is always a canonical UUID string**, but its **meaning depends on which blob** you are looking at:
+The five-part format is `$<alg>$<segment2>$<params_b64>$<blob_b64>` (see [release-notes.md](release-notes.md)). **Segment 2 is always a canonical UUID string**, but its **meaning depends on which blob** you are looking at:
 
 1. **Application ciphertext** (`EncryptedString` column values): segment 2 is the **logical DEK id** — the primary key of `gemstone_key_record` (`GemstoneKeyRecord.key_id`). The resolver passed to `EncryptedString.set_keyctx_resolver` receives this UUID **as a string** and must return a `KeyContext` for that DEK.
 
@@ -76,7 +76,7 @@ Use this when rotating the passphrase or moving to a new KEK slot id while keepi
 - **`gemstone_utils.key_id.new_key_id()`** — returns a new canonical UUIDv7 string for a DEK or KEK slot primary key (RFC 9562; on Python 3.14+ uses `uuid.uuid7()`, otherwise `uuid6`).
 - **`normalize_key_id(value)`** — parse and normalize a UUID string; raises `ValueError` if invalid.
 
-Legacy integer segment values in stored ciphertext are **rejected** at parse time. Upgrading existing deployments requires a **data migration** (application-specific). A **documentation-only** outline lives at [`scripts/migrate_key_ids.py`](../scripts/migrate_key_ids.py). Full breaking-change notes: [`RELEASE_NOTES.md`](../RELEASE_NOTES.md).
+Legacy integer segment values in stored ciphertext are **rejected** at parse time. Upgrading existing deployments requires a **data migration** (application-specific). A **documentation-only** outline lives at [`scripts/migrate_key_ids.py`](https://github.com/gemstone-software-dev/gemstone_utils/blob/main/scripts/migrate_key_ids.py). Full breaking-change notes: [release-notes.md](release-notes.md).
 
 ## Backup and recovery
 

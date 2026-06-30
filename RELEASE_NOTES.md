@@ -191,7 +191,7 @@ pip install https://github.com/gemstone-software-dev/gemstone_utils/releases/dow
 
 ### License
 
-[Mozilla Public License 2.0 (MPL-2.0)](LICENSE)
+[Mozilla Public License 2.0 (MPL-2.0)](https://github.com/gemstone-software-dev/gemstone_utils/blob/main/LICENSE)
 
 ---
 
@@ -246,7 +246,7 @@ pip install https://github.com/gemstone-software-dev/gemstone_utils/releases/dow
 
 ### License
 
-[Mozilla Public License 2.0 (MPL-2.0)](LICENSE)
+[Mozilla Public License 2.0 (MPL-2.0)](https://github.com/gemstone-software-dev/gemstone_utils/blob/main/LICENSE)
 
 ---
 
