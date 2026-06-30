@@ -144,7 +144,10 @@ def _resize_logo(src: str, dst: str, size: int) -> None:
 
 def _ensure_logo_asset() -> None:
     if not os.path.isfile(_LOGO_SRC):
-        return
+        raise FileNotFoundError(
+            f"Logo source not found: {_LOGO_SRC}. "
+            "Add docs/static/gemstone_software_logo_full_cropped.png to the repository."
+        )
     os.makedirs(os.path.dirname(_LOGO_DST), exist_ok=True)
     _resize_logo(_LOGO_SRC, _LOGO_DST, _LOGO_SIZE)
 
