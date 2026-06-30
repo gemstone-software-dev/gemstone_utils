@@ -9,13 +9,12 @@ import warnings
 from typing import Any, Dict, Optional, Tuple
 
 from .crypto import (
-    SUPPORTED_SYM_ALGS,
-    SYM_ALG_REGISTRY,
     b64decode,
     b64encode,
     decrypt_alg,
     encrypt_alg,
     is_supported_sym_alg,
+    require_supported_sym_alg,
 )
 from .key_id import normalize_key_id
 from .types import KeyContext
@@ -27,7 +26,7 @@ def is_encrypted_prefix(value: str) -> bool:
     parts = value.split("$")
     if len(parts) < 4 or parts[0] != "":
         return False
-    return parts[1] in SUPPORTED_SYM_ALGS
+    return is_supported_sym_alg(parts[1])
 
 
 def _params_json_bytes(params: Dict[str, Any]) -> bytes:
@@ -64,8 +63,7 @@ def format_encrypted_field(
     blob: bytes,
     params: Optional[Dict[str, Any]] = None,
 ) -> str:
-    if not is_supported_sym_alg(alg):
-        raise ValueError(f"Unsupported symmetric alg: {alg}")
+    require_supported_sym_alg(alg)
     p = {} if params is None else params
     kid = normalize_key_id(keyid)
     return f"${alg}${kid}${_encode_params_segment(p)}${b64encode(blob)}"
@@ -87,6 +85,7 @@ def parse_encrypted_field(value: str) -> Tuple[str, str, Dict[str, Any], bytes]:
         alg_id = parts[1]
         keyid = _parse_key_id_segment(parts[2])
         blob = b64decode(parts[3])
+        require_supported_sym_alg(alg_id)
         return alg_id, keyid, {}, blob
 
     if len(parts) == 5:
@@ -94,15 +93,14 @@ def parse_encrypted_field(value: str) -> Tuple[str, str, Dict[str, Any], bytes]:
         keyid = _parse_key_id_segment(parts[2])
         params = _decode_params_segment(parts[3])
         blob = b64decode(parts[4])
+        require_supported_sym_alg(alg_id)
         return alg_id, keyid, params, blob
 
     raise ValueError("invalid encrypted field format")
 
 
 def _validate_alg_params(alg_id: str, params: Dict[str, Any]) -> None:
-    spec = SYM_ALG_REGISTRY.get(alg_id)
-    if spec is None:
-        raise ValueError(f"unsupported algorithm: {alg_id}")
+    spec = require_supported_sym_alg(alg_id)
     spec.validate_sym_params(params)
 
 

@@ -65,6 +65,27 @@ def aesgcm_decrypt(dk: bytes, blob: bytes, aad: Optional[bytes] = None) -> bytes
 
 
 # ---- Symmetric algorithm registry -------------------------------------------
+#
+# New symmetric algorithm ids must be added to _ALLOWED_SYM_ALG_NAMES in the same
+# release as the implementation module (future optional extras under crypto/sym/).
+
+_ALLOWED_SYM_ALG_NAMES: frozenset[str] = frozenset({"A256GCM"})
+_SYM_ALG_REGISTRY: Dict[str, SymAlgSpec] = {}
+
+
+def _register_sym_alg(name: str, spec: SymAlgSpec) -> None:
+    if name not in _ALLOWED_SYM_ALG_NAMES:
+        raise ValueError(f"symmetric algorithm {name!r} is not allowlisted")
+    if name in _SYM_ALG_REGISTRY:
+        raise ValueError(f"symmetric algorithm {name!r} already registered")
+    _SYM_ALG_REGISTRY[name] = spec
+
+
+def require_supported_sym_alg(alg: str) -> SymAlgSpec:
+    spec = _SYM_ALG_REGISTRY.get(alg)
+    if spec is None:
+        raise ValueError(f"Unsupported symmetric alg: {alg}")
+    return spec
 
 
 def _a256_validate_sym_params(params: Dict[str, Any]) -> None:
@@ -91,30 +112,28 @@ class SymAlgSpec(NamedTuple):
     decrypt_impl: Callable[[bytes, bytes, Dict[str, Any]], bytes]
 
 
-SYM_ALG_REGISTRY: Dict[str, SymAlgSpec] = {
-    "A256GCM": SymAlgSpec(
+_register_sym_alg(
+    "A256GCM",
+    SymAlgSpec(
         key_length=32,
         validate_sym_params=_a256_validate_sym_params,
         encrypt_impl=_a256_encrypt_impl,
         decrypt_impl=_a256_decrypt_impl,
     ),
-}
+)
 
 RECOMMENDED_DATA_ALG: Final[str] = "A256GCM"
-assert RECOMMENDED_DATA_ALG in SYM_ALG_REGISTRY
+assert RECOMMENDED_DATA_ALG in _SYM_ALG_REGISTRY
 
-SUPPORTED_SYM_ALGS: frozenset[str] = frozenset(SYM_ALG_REGISTRY.keys())
+SUPPORTED_SYM_ALGS: frozenset[str] = frozenset(_SYM_ALG_REGISTRY.keys())
 
 
 def is_supported_sym_alg(alg: str) -> bool:
-    return alg in SYM_ALG_REGISTRY
+    return alg in _SYM_ALG_REGISTRY
 
 
 def sym_alg_key_length(alg: str) -> int:
-    spec = SYM_ALG_REGISTRY.get(alg)
-    if spec is None:
-        raise ValueError(f"Unsupported symmetric alg: {alg}")
-    return spec.key_length
+    return require_supported_sym_alg(alg).key_length
 
 
 def recommended_data_alg() -> str:
@@ -144,9 +163,7 @@ def encrypt_alg(
     Returns ``(ciphertext, updated_params)``. Callers persist ``updated_params``
     in the wire JSON segment when nonces or metadata are stored outside the blob.
     """
-    spec = SYM_ALG_REGISTRY.get(alg)
-    if spec is None:
-        raise ValueError(f"Unsupported symmetric alg: {alg}")
+    spec = require_supported_sym_alg(alg)
     p = dict(params) if params is not None else {}
     spec.validate_sym_params(p)
     return spec.encrypt_impl(key, plaintext, p)
@@ -158,9 +175,7 @@ def decrypt_alg(
     ciphertext: bytes,
     params: Optional[Mapping[str, Any]] = None,
 ) -> bytes:
-    spec = SYM_ALG_REGISTRY.get(alg)
-    if spec is None:
-        raise ValueError(f"Unsupported symmetric alg: {alg}")
+    spec = require_supported_sym_alg(alg)
     p = dict(params) if params is not None else {}
     spec.validate_sym_params(p)
     return spec.decrypt_impl(key, ciphertext, p)

@@ -24,6 +24,7 @@ This page lists **stable, intended** entry points for application use. It is not
 ## Key management (`gemstone_utils.key_mgmt`)
 
 - `derive_kek`, `recommended_kdf_params`, `rotate_kek`, `unwrap_key`, `verify_kek`
+- `is_supported_kdf`, `SUPPORTED_KDF_NAMES` (from `key_mgmt.registry`)
 - `make_kek_check_record`, `load_keyctx`, `init`, `load_passphrase`
 - Package `gemstone_utils.key_mgmt.kdf` — KDF registry and algorithm modules (e.g. `kdf.pbkdf2`)
 

@@ -3,7 +3,13 @@
 
 import pytest
 
-from gemstone_utils.encrypted_fields import decrypt_string, encrypt_string
+import gemstone_utils.crypto as crypto_module
+from gemstone_utils.encrypted_fields import (
+    decrypt_string,
+    encrypt_string,
+    is_encrypted_prefix,
+    parse_encrypted_field,
+)
 from gemstone_utils.crypto import (
     RECOMMENDED_DATA_ALG,
     SUPPORTED_SYM_ALGS,
@@ -55,9 +61,34 @@ def test_recommended_data_alg_matches_registry():
 
 
 def test_legacy_integer_key_segment_raises():
-    from gemstone_utils.encrypted_fields import parse_encrypted_field
-
     # Five $-segments: '' , alg, keyid, params_b64, blob_b64
     legacy = "$A256GCM$1$e30$e30"
     with pytest.raises(ValueError, match="legacy integer"):
         parse_encrypted_field(legacy)
+
+
+def test_parse_encrypted_field_unknown_alg_raises():
+    from gemstone_utils.crypto import b64encode
+    from gemstone_utils.encrypted_fields import _encode_params_segment
+
+    kid = new_key_id()
+    wire = f"$NOPE${kid}${_encode_params_segment({})}${b64encode(b'x')}"
+    with pytest.raises(ValueError, match="Unsupported symmetric alg"):
+        parse_encrypted_field(wire)
+
+
+def test_is_encrypted_prefix_false_for_unknown_alg():
+    from gemstone_utils.crypto import b64encode
+    from gemstone_utils.encrypted_fields import _encode_params_segment
+
+    kid = new_key_id()
+    assert (
+        is_encrypted_prefix(
+            f"$NOPE${kid}${_encode_params_segment({})}${b64encode(b'x')}"
+        )
+        is False
+    )
+
+
+def test_sym_alg_registry_not_public():
+    assert not hasattr(crypto_module, "SYM_ALG_REGISTRY")

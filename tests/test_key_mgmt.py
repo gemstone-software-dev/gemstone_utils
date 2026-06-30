@@ -1,8 +1,10 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright 2026, Clinton Bunch. All rights reserved.
 
+import pytest
+
 from gemstone_utils.crypto import derive_pbkdf2_hmac_sha256
-from gemstone_utils.key_mgmt import derive_kek, recommended_kdf_params
+from gemstone_utils.key_mgmt import derive_kek, recommended_kdf_params, register_kdf
 from gemstone_utils.key_mgmt.kdf import RecommendedKdfParamsFn
 from gemstone_utils.key_mgmt.kdf.pbkdf2 import (
     NAME as PBKDF2_NAME,
@@ -40,3 +42,18 @@ def test_recommended_kdf_params_delegates_to_pbkdf2():
 
 def test_recommended_pbkdf2_params_is_recommended_kdf_params_fn():
     assert isinstance(recommended_pbkdf2_params, RecommendedKdfParamsFn)
+
+
+def test_is_supported_kdf_built_in():
+    from gemstone_utils.key_mgmt.registry import is_supported_kdf
+
+    assert is_supported_kdf(PBKDF2_NAME) is True
+    assert is_supported_kdf("nope") is False
+
+
+def test_register_kdf_disallowed_name_raises():
+    with pytest.raises(ValueError, match="not allowlisted"):
+
+        @register_kdf("evil-kdf")
+        def _evil(_passphrase: str, _params: dict) -> bytes:
+            return b"\x00" * 32

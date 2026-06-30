@@ -6,8 +6,12 @@ Algorithm-specific KDF helpers under ``gemstone_utils.key_mgmt.kdf``.
 
 **Contributor contract** for each submodule (e.g. ``pbkdf2``, future ``argon2id``):
 
+- Add the registry id to ``_ALLOWED_KDF_NAMES`` in
+  :mod:`gemstone_utils.key_mgmt.registry` in the **same release** as the submodule.
 - Register with :func:`gemstone_utils.key_mgmt.register_kdf` when the submodule
   is imported (typically triggered by importing ``gemstone_utils.key_mgmt``).
+  ``register_kdf`` is for first-party modules only; third-party runtime
+  registration is not supported.
 - Expose module-level **NAME** (``str``): registry id stored in persisted JSON
   as ``params[\"kdf\"]``.
 - Expose **recommended_<algorithm>_params(salt=None) -> dict** with strong

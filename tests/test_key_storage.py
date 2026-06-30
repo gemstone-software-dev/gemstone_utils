@@ -244,3 +244,12 @@ def test_rewrap_wrong_segment_raises(bootstrapped):
                     old_wrap_key_id="00000000-0000-0000-0000-000000000099",
                     new_wrap_key_id=kek_id,
                 )
+
+
+def test_set_kdf_params_rejects_unsupported_kdf(db_url):
+    init_db(db_url)
+    kek_id = new_key_id()
+    with get_session() as session:
+        with pytest.raises(ValueError, match="Unsupported KDF"):
+            with session.begin():
+                set_kdf_params(session, kek_id, {"kdf": "nope", "salt": "e30"})

@@ -22,6 +22,7 @@ from gemstone_utils.key_mgmt import (
     rotate_kek,
     unwrap_key,
 )
+from gemstone_utils.key_mgmt.registry import is_supported_kdf
 from gemstone_utils.types import KeyContext, KeyRecord
 
 
@@ -115,6 +116,9 @@ def get_kdf_params(session: Session, key_id: str) -> dict:
 
 
 def set_kdf_params(session: Session, key_id: str, params: dict) -> None:
+    kdf_name = params.get("kdf")
+    if not kdf_name or not is_supported_kdf(kdf_name):
+        raise ValueError(f"Unsupported KDF for persisted params: {kdf_name!r}")
     text = json.dumps(params, sort_keys=True, separators=(",", ":"))
     row = session.get(GemstoneKeyKdf, key_id)
     now = _utcnow()

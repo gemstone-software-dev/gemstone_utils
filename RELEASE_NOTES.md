@@ -22,6 +22,10 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 - **Removed `azexp` backend:** `gemstone_utils.experimental.azexp_backend` is deleted. The `azexp:` prefix and optional extra `gemstone_utils[azure]` are no longer supported.
 - **Colon references require a backend:** Any value containing `:` must use a registered prefix (`env`, `file`, `secret`, `literal`, or `register_backend`). Unknown prefixes raise **`BackendNotImplemented`** (`reason="unregistered"`). Removed prefixes (e.g. `azexp`) raise **`BackendNotImplemented`** (`reason="removed"`).
 - **New built-in `literal:`** — returns the substring after the first colon unchanged (for URLs, connection strings, or other opaque values). Still runs encrypted-field post-processing when applicable.
+- **`SYM_ALG_REGISTRY` removed:** Use `is_supported_sym_alg` / `SUPPORTED_SYM_ALGS`; the symmetric registry is no longer a public mutable dict.
+- **`register_kdf` allowlisted:** Only first-party KDF ids in `_ALLOWED_KDF_NAMES` may register; third-party runtime registration is unsupported.
+- **`parse_encrypted_field` stricter:** Unknown symmetric algorithm ids in the wire format raise at parse time (previously failed later at decrypt).
+- **`set_kdf_params` stricter:** Rejects unsupported `params["kdf"]` at persist time.
 
 #### Migration
 
@@ -29,6 +33,7 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 - `azexp:https://vault.vault.azure.net/secrets/foo` → `secret:foo` when the platform mounts Key Vault secrets as files (Azure Container Apps, quadlet, etc.), or `file:/mount/path/foo` for a custom mount path
 - Opaque legacy `azexp:...` text → `literal:azexp:...`
 - Plain strings without `:` are unchanged
+- Apps that mutated `SYM_ALG_REGISTRY` or called `register_kdf` for custom algorithms: add names to gemstone_utils allowlists in a fork, or stay on v0.4.x. No data migration is required for existing `A256GCM` / `pbkdf2-hmac-sha256` deployments.
 
 ---
 

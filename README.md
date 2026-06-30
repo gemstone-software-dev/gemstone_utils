@@ -20,7 +20,7 @@ Breaking changes and migration (including UUID key ids): [RELEASE_NOTES.md](RELE
 ## Features
 
 ### 🔐 Cryptography core
-- Registered symmetric algorithms (`SYM_ALG_REGISTRY`, `SUPPORTED_SYM_ALGS`) with **`encrypt_alg` / `decrypt_alg`** (optional per‑algorithm params; encrypt returns **`(ciphertext, updated_params)`**)
+- Registered symmetric algorithms (`SUPPORTED_SYM_ALGS`, `is_supported_sym_alg`) with **`encrypt_alg` / `decrypt_alg`** (optional per‑algorithm params; encrypt returns **`(ciphertext, updated_params)`**)
 - **`recommended_data_alg()`** / **`RECOMMENDED_DATA_ALG`** — library default field algorithm id (avoids hardcoding in apps)
 - **`generate_key_by_alg(alg)`** for DEK-sized random bytes from the registry
 - PBKDF2‑HMAC‑SHA256 key derivation (no extra dependencies)
@@ -41,7 +41,7 @@ Breaking changes and migration (including UUID key ids): [RELEASE_NOTES.md](RELE
 - `EncryptedString.set_keyctx_resolver()` to map `keyid` from stored ciphertext to a `KeyContext` on read
 
 ### 🔐 Key management (`key_mgmt`)
-- **`derive_kek(passphrase, params)`** plus a pluggable **`register_kdf`** registry; params JSON is the source of truth for which algorithm runs.
+- **`derive_kek(passphrase, params)`** with a first-party KDF registry (`is_supported_kdf`, `SUPPORTED_KDF_NAMES`); params JSON is the source of truth for which algorithm runs.
 - **`recommended_kdf_params()`** — library default for *new* KDF rows (today: PBKDF2‑HMAC‑SHA256 with strong iteration count and random salt).
 - **`gemstone_utils.key_mgmt.kdf`** — documented contract (`RecommendedKdfParamsFn`, `HasKdfRegistryName`) and per‑algorithm modules (e.g. **`kdf.pbkdf2`**: `NAME`, `pbkdf2_params`, `recommended_pbkdf2_params`) when you pin a specific algorithm instead of the default.
 
