@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 PathLike = Union[str, os.PathLike[str]]
 
-_SECRET_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+_SECRET_NAME_RE = re.compile(r"^[A-Za-z]([A-Za-z0-9_-]*[A-Za-z0-9])?$")
 
 _DEFAULT_FILE_PREFIXES: tuple[str, ...] = ("/app/secret",)
 _file_path_prefixes: Optional[tuple[Path, ...]] = None
@@ -251,7 +251,10 @@ def resolve_file(path: str) -> str:
 
 def _validate_secret_name(name: str) -> None:
     if not _SECRET_NAME_RE.fullmatch(name):
-        raise ValueError("secret name must match [A-Za-z0-9_-]+")
+        raise ValueError(
+            "secret name must start with a letter, end with a letter or digit, "
+            "and contain only [A-Za-z0-9_-]"
+        )
 
 
 def _secret_mount_roots() -> tuple[Path, ...]:

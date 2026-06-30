@@ -10,7 +10,7 @@ The module `gemstone_utils.experimental.secrets_resolver` resolves string refere
 |--------|----------|
 | `env:VAR` | Read `os.environ[VAR]`, cache, then **delete** the variable from the environment (scrub). |
 | `file:/path` | Read UTF-8 file once, strip, cache. Path must be **absolute** (no `~`). Allowed only under configured prefixes (default: `/app/secret`). |
-| `secret:name` | Search `CREDENTIALS_DIRECTORY`, `/run/secrets/`, `/var/run/secrets/`. Name must match `[A-Za-z0-9_-]+`. |
+| `secret:name` | Search `CREDENTIALS_DIRECTORY`, `/run/secrets/`, `/var/run/secrets/`. Name must start with a letter, end with a letter or digit, and contain only `[A-Za-z0-9_-]`. |
 | `literal:opaque` | Return the substring after the first colon unchanged (URLs, connection strings, etc.). |
 
 Custom prefixes can be registered with `register_backend(prefix, resolver, ...)`.
@@ -34,7 +34,7 @@ set_allowed_file_path_prefixes(["/etc/myapp/secrets"])
 
 ### `secret:`
 
-- The name segment must match **`[A-Za-z0-9_-]+`** (letters, digits, hyphen, underscore only).
+- The name segment must **start with a letter**, **end with a letter or digit**, and contain only **`[A-Za-z0-9_-]`** (no trailing `-` or `_`).
 - Secret mounts are read via fixed roots (`CREDENTIALS_DIRECTORY`, `/run/secrets`, `/var/run/secrets`) and are **not** subject to the `file:` allowlist.
 - Names with dots or slashes (e.g. systemd-style dotted names) must use `file:` under a narrow allowed prefix instead.
 

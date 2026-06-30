@@ -235,7 +235,7 @@ Searches:
 - `/run/secrets/name`
 - `/var/run/secrets/name`
 
-The name must match **`[A-Za-z0-9_-]+`**. This backend uses fixed mount roots and is not gated by the `file:` allowlist.
+The name must **start with a letter**, **end with a letter or digit**, and contain only **`[A-Za-z0-9_-]`**. This backend uses fixed mount roots and is not gated by the `file:` allowlist.
 
 For Azure Container Apps, Cloud Run, or other platforms with a custom mount path, use `file:/path/to/secret` or mount secrets at `/run/secrets/{name}` so `secret:name` applies.
 

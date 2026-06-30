@@ -27,7 +27,7 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 - **`parse_encrypted_field` stricter:** Unknown symmetric algorithm ids in the wire format raise at parse time (previously failed later at decrypt).
 - **`set_kdf_params` stricter:** Rejects unsupported `params["kdf"]` at persist time.
 - **`file:` path allowlist:** Default allowed prefix is `/app/secret` only; override with `set_allowed_file_path_prefixes`. Paths must be absolute; `~` is rejected.
-- **`secret:` name charset:** Names must match `[A-Za-z0-9_-]+` only.
+- **`secret:` name charset:** Names must start with a letter, end with a letter or digit, and contain only `[A-Za-z0-9_-]` (no trailing `-` or `_`).
 
 #### Migration
 
@@ -37,7 +37,19 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 - Plain strings without `:` are unchanged
 - Apps that mutated `SYM_ALG_REGISTRY` or called `register_kdf` for custom algorithms: add names to gemstone_utils allowlists in a fork, or stay on v0.4.x. No data migration is required for existing `A256GCM` / `pbkdf2-hmac-sha256` deployments.
 - **`file:` bootstrap:** Use `file:/app/secret/...` in containers, or call `set_allowed_file_path_prefixes([...])` at startup for bare-metal/dev paths (e.g. `/etc/myapp/secrets`). Do not rely on relative paths or `~`.
-- **`secret:` names** with dots or slashes: rename mounts to `[A-Za-z0-9_-]+` or use `file:` under a narrow prefix.
+- **`secret:` names** with dots or slashes: rename mounts to match the `secret:` naming rules or use `file:` under a narrow prefix.
+
+---
+
+## v0.4.1
+
+**Tag:** `v0.4.1`  
+**PyPI:** `pip install gemstone_utils==0.4.1`
+
+### Fixes
+
+- **`init_db` multi-worker startup:** PostgreSQL and MySQL / MariaDB schema creation now runs under a dialect advisory lock so concurrent workers (e.g. gunicorn) do not race on `CREATE TABLE` during ephemeral-database bootstrap.
+- **PostgreSQL lock key:** Uses `pg_advisory_xact_lock(int, int)` with int32 keys (the initial single-key constant exceeded PostgreSQL `bigint` range).
 
 ---
 

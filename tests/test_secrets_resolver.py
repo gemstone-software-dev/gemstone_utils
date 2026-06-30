@@ -162,8 +162,20 @@ def test_secret_does_not_use_file_allowlist(tmp_path, monkeypatch):
         "secret:a.b",
         "secret:a/b",
         "secret:bad name",
+        "secret:_bad",
+        "secret:bad_",
+        "secret:bad-",
+        "secret:-bad",
     ],
 )
 def test_secret_invalid_names(reference):
-    with pytest.raises(ValueError, match=r"\[A-Za-z0-9_-\]\+"):
+    with pytest.raises(ValueError, match="secret name must start with a letter"):
         resolve_secret(reference)
+
+
+def test_secret_single_letter_name(tmp_path, monkeypatch):
+    cred_dir = tmp_path / "creds"
+    cred_dir.mkdir()
+    (cred_dir / "x").write_text("one\n", encoding="utf-8")
+    monkeypatch.setenv("CREDENTIALS_DIRECTORY", str(cred_dir))
+    assert resolve_secret("secret:x") == "one"
