@@ -15,7 +15,20 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 
 ## Unreleased
 
-### v0.5.0 (unreleased)
+Nothing yet.
+
+---
+
+## v0.5.0a1 (alpha)
+
+**Tag:** `v0.5.0a1`  
+**PyPI:** `pip install gemstone_utils==0.5.0a1` or `pip install --pre gemstone_utils` (see [pre-release install behavior](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions)).
+
+### Overview
+
+First **alpha** toward **v0.5.0**. Delivers **security hardening** for the secrets resolver and key/algorithm registration (**breaking changes**). API and behavior may still change before the stable release; see the pre-release naming section above. Pin **`gemstone_utils==0.4.1`** for the current **stable** line without these breaking changes.
+
+### Changes since v0.4.1
 
 #### Breaking changes
 
@@ -46,6 +59,10 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 **Tag:** `v0.4.1`  
 **PyPI:** `pip install gemstone_utils==0.4.1`
 
+### Overview
+
+Current **stable** line for the **`gemstone_utils`** package; pin **`gemstone_utils==0.4.1`** or a compatible **0.4.x** range for production use without the **0.5.x** security breaking changes.
+
 ### Fixes
 
 - **`init_db` multi-worker startup:** PostgreSQL and MySQL / MariaDB schema creation now runs under a dialect advisory lock so concurrent workers (e.g. gunicorn) do not race on `CREATE TABLE` during ephemeral-database bootstrap.
@@ -60,7 +77,7 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 
 ### Overview
 
-**Stable** release matching **[v0.4.0rc1](#v040rc1-release-candidate)** with no intentional API or behavior changes. This is the current **stable** line for the **`gemstone_utils`** package (post-`emerald_utils` rename); pin **`gemstone_utils==0.4.0`** or a compatible range for production use.
+**Stable** release matching **[v0.4.0rc1](#v040rc1-release-candidate)** with no intentional API or behavior changes. Superseded by **[v0.4.1](#v041)** for production use.
 
 ---
 
