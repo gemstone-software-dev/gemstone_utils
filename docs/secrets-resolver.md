@@ -59,6 +59,7 @@ If the resolved string looks like an encrypted field (`is_encrypted_prefix`), it
 - **`set_allowed_file_path_prefixes(prefixes)`** — replace the `file:` path allowlist (default `/app/secret` only).
 - **`allowed_file_path_prefixes() -> frozenset[str]`** — resolved allowlist prefixes for introspection.
 - **`resolve_secret(value: str) -> str`** — dispatches on prefix or decrypts encrypted blobs.
+- **`register_backend`**, **`unregister_backend`**, **`is_backend_registered`**, **`list_backends`** — pluggable backend registry (built-ins `env`, `file`, `secret`, `literal` are pre-registered).
 - **`FilePathNotAllowed`** — raised when a `file:` path is outside the allowlist.
 
 ## Operational caveats

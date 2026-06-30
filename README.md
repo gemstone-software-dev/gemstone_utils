@@ -10,6 +10,7 @@ The package is licensed under the **MPL‑2.0**, allowing use in both open‑sou
 |--------|--------|
 | SQLAlchemy `EncryptedString`, init order, rotation | [docs/sqlalchemy.md](docs/sqlalchemy.md) |
 | Persisted keys (`key_storage`), two-level wire semantics, bootstrap | [docs/key-storage.md](docs/key-storage.md) |
+| SQL-backed leader election | [docs/election.md](docs/election.md) |
 | Experimental `resolve_secret` and backends | [docs/secrets-resolver.md](docs/secrets-resolver.md) |
 | Curated public API (stable vs experimental) | [docs/api.md](docs/api.md) |
 
