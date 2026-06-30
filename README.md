@@ -218,14 +218,24 @@ api_token = "secret:my_api_token"
 ### `env:VAR`
 Reads from environment, caches, and scrubs the variable.
 
-### `file:/path/to/file`
-Reads a file once and caches it.
+### `file:/absolute/path/to/file`
+Reads a file once and caches it. The path must be **absolute**; `~` is not expanded. By default only paths under **`/app/secret`** are allowed. Replace the allowlist at startup:
+
+```python
+from gemstone_utils.experimental.secrets_resolver import set_allowed_file_path_prefixes
+
+set_allowed_file_path_prefixes(["/etc/myapp/secrets"])
+```
+
+Do not register bare `/etc` or `/` if you can avoid it (a warning is logged). Prefer `/etc/yourapp/...`.
 
 ### `secret:name`
 Searches:
 - `$CREDENTIALS_DIRECTORY/name`
 - `/run/secrets/name`
 - `/var/run/secrets/name`
+
+The name must match **`[A-Za-z0-9_-]+`**. This backend uses fixed mount roots and is not gated by the `file:` allowlist.
 
 For Azure Container Apps, Cloud Run, or other platforms with a custom mount path, use `file:/path/to/secret` or mount secrets at `/run/secrets/{name}` so `secret:name` applies.
 

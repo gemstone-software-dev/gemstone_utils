@@ -26,6 +26,8 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 - **`register_kdf` allowlisted:** Only first-party KDF ids in `_ALLOWED_KDF_NAMES` may register; third-party runtime registration is unsupported.
 - **`parse_encrypted_field` stricter:** Unknown symmetric algorithm ids in the wire format raise at parse time (previously failed later at decrypt).
 - **`set_kdf_params` stricter:** Rejects unsupported `params["kdf"]` at persist time.
+- **`file:` path allowlist:** Default allowed prefix is `/app/secret` only; override with `set_allowed_file_path_prefixes`. Paths must be absolute; `~` is rejected.
+- **`secret:` name charset:** Names must match `[A-Za-z0-9_-]+` only.
 
 #### Migration
 
@@ -34,6 +36,8 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 - Opaque legacy `azexp:...` text → `literal:azexp:...`
 - Plain strings without `:` are unchanged
 - Apps that mutated `SYM_ALG_REGISTRY` or called `register_kdf` for custom algorithms: add names to gemstone_utils allowlists in a fork, or stay on v0.4.x. No data migration is required for existing `A256GCM` / `pbkdf2-hmac-sha256` deployments.
+- **`file:` bootstrap:** Use `file:/app/secret/...` in containers, or call `set_allowed_file_path_prefixes([...])` at startup for bare-metal/dev paths (e.g. `/etc/myapp/secrets`). Do not rely on relative paths or `~`.
+- **`secret:` names** with dots or slashes: rename mounts to `[A-Za-z0-9_-]+` or use `file:` under a narrow prefix.
 
 ---
 

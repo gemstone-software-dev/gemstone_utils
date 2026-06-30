@@ -49,7 +49,7 @@ This page lists **stable, intended** entry points for application use. It is not
 
 ## Experimental
 
-- `gemstone_utils.experimental.secrets_resolver` — `resolve_secret`, `set_keyctx_resolver`, `register_backend`, `BackendNotImplemented`
+- `gemstone_utils.experimental.secrets_resolver` — `resolve_secret`, `set_keyctx_resolver`, `set_allowed_file_path_prefixes`, `allowed_file_path_prefixes`, `FilePathNotAllowed`, `register_backend`, `BackendNotImplemented`
 
 ## Further reading
 

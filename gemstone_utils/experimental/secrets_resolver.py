@@ -4,8 +4,11 @@
 
 from __future__ import annotations
 
+import logging
 import os
-from typing import Callable, Optional
+import re
+from pathlib import Path
+from typing import Callable, Optional, Sequence, Union
 
 from gemstone_utils.encrypted_fields import (
     decrypt_string,
@@ -13,6 +16,15 @@ from gemstone_utils.encrypted_fields import (
     parse_encrypted_field,
 )
 from gemstone_utils.types import KeyContext
+
+logger = logging.getLogger(__name__)
+
+PathLike = Union[str, os.PathLike[str]]
+
+_SECRET_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+
+_DEFAULT_FILE_PREFIXES: tuple[str, ...] = ("/app/secret",)
+_file_path_prefixes: Optional[tuple[Path, ...]] = None
 
 
 # ---------------------------------------------------------------------------
@@ -27,6 +39,18 @@ class BackendNotImplemented(RuntimeError):
         self.prefix = prefix
         self.reason = reason  # "removed" | "unregistered"
         super().__init__(f"{prefix}: {message}")
+
+
+class FilePathNotAllowed(ValueError):
+    """``file:`` path is not under an allowed prefix."""
+
+    def __init__(self, path: str, allowed_prefixes: frozenset[str]) -> None:
+        self.path = path
+        self.allowed_prefixes = allowed_prefixes
+        super().__init__(
+            f"file: path {path!r} is not under allowed prefixes "
+            f"({', '.join(sorted(allowed_prefixes))})"
+        )
 
 
 _REMOVED_BACKENDS: dict[str, str] = {
@@ -65,6 +89,130 @@ def _resolve_keyctx_for_ciphertext(value: str) -> KeyContext:
 
 
 # ---------------------------------------------------------------------------
+# file: path allowlist
+# ---------------------------------------------------------------------------
+
+
+def _path_string_has_tilde(path_str: str) -> bool:
+    return path_str.startswith("~") or "/~" in path_str or "\\~" in path_str
+
+
+def _normalize_prefix_path(prefix: PathLike) -> Path:
+    text = os.fspath(prefix)
+    if not text:
+        raise ValueError("file path prefix must not be empty")
+    if _path_string_has_tilde(text):
+        raise ValueError("file path prefix must not use ~")
+    path = Path(text)
+    if not path.is_absolute():
+        raise ValueError(f"file path prefix must be absolute: {text!r}")
+    return path.resolve(strict=False)
+
+
+def _is_bare_etc_prefix(resolved: Path) -> bool:
+    return resolved == Path("/etc").resolve(strict=False)
+
+
+def _is_filesystem_root_prefix(resolved: Path) -> bool:
+    root = Path(resolved.anchor).resolve(strict=False)
+    return resolved == root
+
+
+def _warn_footgun_prefixes(resolved: Path, warned: set[Path]) -> None:
+    if resolved in warned:
+        return
+    if _is_bare_etc_prefix(resolved):
+        logger.warning(
+            "file: allowlist includes bare /etc; any path under /etc may be readable "
+            "via file: references (e.g. file:/etc/passwd). Prefer a narrow prefix "
+            "such as /etc/yourapp/ — see secrets_resolver docs."
+        )
+        warned.add(resolved)
+        return
+    if _is_filesystem_root_prefix(resolved):
+        logger.warning(
+            "file: allowlist includes filesystem root %s; any absolute path on that "
+            "volume may be readable via file: references. Prefer a narrow prefix — "
+            "see secrets_resolver docs.",
+            resolved,
+        )
+        warned.add(resolved)
+
+
+def set_allowed_file_path_prefixes(prefixes: Sequence[PathLike]) -> None:
+    """
+    Replace the ``file:`` path allowlist.
+
+    Until this is called, only paths under ``/app/secret`` are allowed. Prefixes must
+    be absolute and must not use ``~`` (no tilde expansion). Registering bare ``/etc``
+    or a filesystem root logs a warning but is not blocked.
+    """
+    global _file_path_prefixes
+    normalized: list[Path] = []
+    warned: set[Path] = set()
+    for prefix in prefixes:
+        resolved = _normalize_prefix_path(prefix)
+        _warn_footgun_prefixes(resolved, warned)
+        normalized.append(resolved)
+    _file_path_prefixes = tuple(normalized)
+
+
+def allowed_file_path_prefixes() -> frozenset[str]:
+    """Resolved absolute prefix strings for the effective ``file:`` allowlist."""
+    return frozenset(p.as_posix() for p in _effective_file_prefixes())
+
+
+def _effective_file_prefixes() -> tuple[Path, ...]:
+    if _file_path_prefixes is not None:
+        return _file_path_prefixes
+    return tuple(Path(p).resolve(strict=False) for p in _DEFAULT_FILE_PREFIXES)
+
+
+def _path_under_prefix(resolved: Path, prefix: Path) -> bool:
+    if resolved == prefix:
+        return True
+    try:
+        resolved.relative_to(prefix)
+    except ValueError:
+        return False
+    return True
+
+
+def _assert_under_prefixes(resolved: Path, prefixes: tuple[Path, ...]) -> None:
+    for prefix in prefixes:
+        if _path_under_prefix(resolved, prefix):
+            return
+    allowed = frozenset(p.as_posix() for p in prefixes)
+    raise FilePathNotAllowed(resolved.as_posix(), allowed)
+
+
+def _validate_user_file_path(path: str) -> Path:
+    if not path:
+        raise ValueError("file: path must not be empty")
+    if _path_string_has_tilde(path):
+        raise ValueError("file: path must not use ~")
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        raise ValueError(f"file: path must be absolute: {path!r}")
+    return candidate.resolve(strict=False)
+
+
+def _assert_under_file_allowlist(resolved: Path) -> None:
+    _assert_under_prefixes(resolved, _effective_file_prefixes())
+
+
+def _read_utf8_file(cache_key: str, resolved: Path) -> str:
+    if cache_key in _cache:
+        return _cache[cache_key]
+
+    with open(resolved, "r", encoding="utf-8") as f:
+        value = f.read().strip()
+
+    _cache[cache_key] = value
+    return value
+
+
+# ---------------------------------------------------------------------------
 # env:
 # ---------------------------------------------------------------------------
 
@@ -91,39 +239,55 @@ def resolve_env(varname: str) -> str:
 # ---------------------------------------------------------------------------
 
 def resolve_file(path: str) -> str:
-    cache_key = f"file:{path}"
-    if cache_key in _cache:
-        return _cache[cache_key]
-
-    with open(path, "r", encoding="utf-8") as f:
-        value = f.read().strip()
-
-    _cache[cache_key] = value
-    return value
+    resolved = _validate_user_file_path(path)
+    _assert_under_file_allowlist(resolved)
+    return _read_utf8_file(f"file:{path}", resolved)
 
 
 # ---------------------------------------------------------------------------
 # secret:
 # ---------------------------------------------------------------------------
 
+
+def _validate_secret_name(name: str) -> None:
+    if not _SECRET_NAME_RE.fullmatch(name):
+        raise ValueError("secret name must match [A-Za-z0-9_-]+")
+
+
+def _secret_mount_roots() -> tuple[Path, ...]:
+    roots: list[Path] = []
+    cred_dir = os.environ.get("CREDENTIALS_DIRECTORY")
+    if cred_dir:
+        roots.append(Path(cred_dir).resolve(strict=False))
+    roots.append(Path("/run/secrets").resolve(strict=False))
+    roots.append(Path("/var/run/secrets").resolve(strict=False))
+    return tuple(roots)
+
+
+def _resolve_secret_mount_file(resolved: Path) -> str:
+    _assert_under_prefixes(resolved, _secret_mount_roots())
+    return _read_utf8_file(f"file:{resolved.as_posix()}", resolved)
+
+
 def resolve_secretfile(name: str) -> str:
+    _validate_secret_name(name)
+
     cache_key = f"secret:{name}"
     if cache_key in _cache:
         return _cache[cache_key]
 
     cred_dir = os.environ.get("CREDENTIALS_DIRECTORY")
 
-    search_paths = [
-        os.path.join(cred_dir, name) if cred_dir else None,
-        f"/run/secrets/{name}",
-        f"/var/run/secrets/{name}",
-    ]
+    candidates: list[Path] = []
+    if cred_dir:
+        candidates.append(Path(cred_dir) / name)
+    candidates.append(Path("/run/secrets") / name)
+    candidates.append(Path("/var/run/secrets") / name)
 
-    for path in search_paths:
-        if not path:
-            continue
+    for candidate in candidates:
+        resolved = candidate.resolve(strict=False)
         try:
-            value = resolve_file(path)
+            value = _resolve_secret_mount_file(resolved)
             _cache[cache_key] = value
             return value
         except FileNotFoundError:
