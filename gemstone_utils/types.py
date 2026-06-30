@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: MPL-2.0
 # gemstone_utils/types.py
 
+"""Shared types for field encryption and wrapped key material."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -11,14 +13,17 @@ from gemstone_utils.crypto import recommended_data_alg
 
 @dataclass
 class KeyRecord:
-    """
-    Generic encrypted-key metadata container.
+    """Encrypted key material and metadata for wrap/unwrap operations.
 
-    Applications construct this from their own storage layer.
-    ``params`` matches the JSON params segment in the encrypted-field wire format.
+    Applications construct instances from their own storage layer. ``params``
+    matches the JSON params segment in the encrypted-field wire format.
 
-    ``keyid`` is the logical DEK id (canonical UUID string), or ``None`` for a
-    KEK-check (canary) blob that is not a DEK.
+    Attributes:
+        keyid: Logical DEK id (canonical UUID string), or ``None`` for a
+            KEK-check (canary) blob that is not a DEK.
+        alg: Symmetric wrap algorithm id.
+        encrypted_key: Ciphertext blob (algorithm-specific layout).
+        params: Per-algorithm parameters persisted alongside the blob.
     """
 
     keyid: Optional[str]
@@ -29,10 +34,12 @@ class KeyRecord:
 
 @dataclass
 class KeyContext:
-    """
-    Active key context for field encryption (data key + key id + algorithm).
+    """Active data key context for field encryption.
 
-    ``keyid`` is a canonical UUID string (segment 2 in encrypted-field wire format).
+    Attributes:
+        keyid: Canonical UUID string (segment 2 in encrypted-field wire format).
+        key: Raw data-encryption key bytes.
+        alg: Symmetric algorithm id for application field encryption.
     """
 
     keyid: str

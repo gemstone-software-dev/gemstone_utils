@@ -2,6 +2,8 @@
 # Copyright 2026,
 # gemstone_utils/db.py
 
+"""Process-global SQLAlchemy engine, session factory, and declarative base."""
+
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -13,7 +15,11 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 
 class GemstoneDB(DeclarativeBase):
-    """Shared declarative base for gemstone_utils ORM models."""
+    """Shared declarative base for ``gemstone_utils`` ORM models.
+
+    Subclass this base in plugin modules, import them before ``init_db``, then
+    call ``init_db`` to create any missing tables on ``GemstoneDB.metadata``.
+    """
 
 
 _engine: Optional[Engine] = None
@@ -119,22 +125,26 @@ def _create_all_locked(engine: Engine, drivername: str) -> None:
 
 
 def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
-    """
-    Configure the process-global SQLAlchemy engine and session factory, then
-    create any missing tables for all models registered on
-    :attr:`GemstoneDB.metadata` (call after every plugin/module that defines
-    ``GemstoneDB`` subclasses has been imported).
+    """Configure the process-global engine and create missing tables.
 
-    Applies light dialect-specific defaults (SQLite WAL and pragmas; MySQL /
-    MariaDB utf8mb4 + pool tuning; PostgreSQL UTC session timezone + pool
-    tuning). Pass ``**engine_kw`` to override or extend :func:`create_engine`
-    arguments.
+    Import every module that defines ``GemstoneDB`` subclasses before calling
+    this function so their tables are registered on ``GemstoneDB.metadata``.
 
-    Schema creation uses a dialect advisory lock on PostgreSQL and MySQL /
-    MariaDB so multiple workers (e.g. gunicorn) can call ``init_db`` at
-    startup without racing on ``CREATE TABLE``.
+    Applies dialect-specific defaults (SQLite WAL; MySQL/MariaDB utf8mb4 and
+    pool tuning; PostgreSQL UTC session timezone). Pass ``**engine_kw`` to
+    override or extend :func:`sqlalchemy.create_engine` arguments.
 
-    Returns the new :class:`~sqlalchemy.engine.Engine`.
+    Schema creation uses an advisory lock on PostgreSQL and MySQL/MariaDB so
+    multiple workers can call ``init_db`` at startup without racing on
+    ``CREATE TABLE``.
+
+    Args:
+        db_url: SQLAlchemy database URL.
+        echo: Log SQL when ``True``.
+        **engine_kw: Additional arguments for :func:`create_engine`.
+
+    Returns:
+        The configured :class:`~sqlalchemy.engine.Engine`.
     """
     global _engine, _session_factory
 
@@ -159,10 +169,14 @@ def init_db(db_url: str, *, echo: bool = False, **engine_kw: Any) -> Engine:
 
 
 def get_session() -> Session:
-    """
-    Return a new :class:`~sqlalchemy.orm.Session` bound to the engine from
-    :func:`init_db`. The caller should close the session when done (or use it
-    as a context manager: ``with get_session() as session:``).
+    """Return a new session bound to the engine from :func:`init_db`.
+
+    Returns:
+        New :class:`~sqlalchemy.orm.Session`. Close when done, or use as a
+        context manager: ``with get_session() as session:``.
+
+    Raises:
+        RuntimeError: If :func:`init_db` was not called.
     """
     if _session_factory is None:
         raise RuntimeError("init_db(...) must be called before get_session()")

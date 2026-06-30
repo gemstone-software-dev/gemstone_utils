@@ -18,12 +18,13 @@ from .lazy_secret import LazySecret
 
 
 class EncryptedString(TypeDecorator):
-    """
-    SQLAlchemy TypeDecorator for encrypted text fields.
+    """SQLAlchemy ``TypeDecorator`` for transparent encrypted text columns.
 
-    - Writes always use the *current* KeyContext (set by the app).
-    - Reads parse the prefix, resolve the correct KeyContext for that key id,
-      and return a LazySecret that decrypts on access.
+    Writes encrypt with the *current* ``KeyContext``; reads return a
+    ``LazySecret`` that decrypts on access.
+
+    Configure once at startup via ``set_current_keyctx`` and
+    ``set_keyctx_resolver``. See ``docs/sqlalchemy.md``.
     """
 
     impl = Text
@@ -36,17 +37,20 @@ class EncryptedString(TypeDecorator):
 
     @classmethod
     def set_current_keyctx(cls, keyctx: KeyContext) -> None:
-        """
-        Set the KeyContext used for *new* writes (current DK).
+        """Set the ``KeyContext`` used for new writes.
+
+        Args:
+            keyctx: Active DEK context for encrypting plaintext bound parameters.
         """
         cls._current_keyctx = keyctx
 
     @classmethod
     def set_keyctx_resolver(cls, resolver: Callable[[str], KeyContext]) -> None:
-        """
-        Set a resolver that, given a key id string (UUID), returns the appropriate KeyContext.
+        """Set the resolver that maps stored key ids to ``KeyContext``.
 
-        The application wires this to its own DK storage/lookup logic.
+        Args:
+            resolver: Callable receiving canonical UUID string (wire segment 2)
+                and returning the ``KeyContext`` that can decrypt that row.
         """
         cls._keyctx_resolver = resolver
 

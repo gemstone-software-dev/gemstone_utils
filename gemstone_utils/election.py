@@ -2,6 +2,8 @@
 # Copyright 2026,
 # gemstone_utils/election.py
 
+"""SQL-backed leader election with leases and namespaces."""
+
 from __future__ import annotations
 
 from contextlib import contextmanager
@@ -29,10 +31,15 @@ _expire_seconds: int = 60
 
 
 def set_expire(sec: int) -> None:
-    """
-    Set the candidate and leader lease expiration window (seconds).
+    """Set the candidate and leader lease window in seconds.
 
-    The application should call this once at startup.
+    Call once at startup. Default is 60 seconds.
+
+    Args:
+        sec: Positive lease duration in seconds.
+
+    Raises:
+        ValueError: If ``sec`` is not a positive integer.
     """
     global _expire_seconds
     if not isinstance(sec, int) or sec <= 0:
@@ -41,6 +48,11 @@ def set_expire(sec: int) -> None:
 
 
 class ElectionCandidate(GemstoneDB):
+    """Registered candidate with heartbeat expiry.
+
+    Composite primary key: ``ns``, ``candidate_id``.
+    """
+
     __tablename__ = "gemstone_election_candidate"
 
     ns: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -51,6 +63,11 @@ class ElectionCandidate(GemstoneDB):
 
 
 class ElectionLeader(GemstoneDB):
+    """Per-namespace leader lease row.
+
+    Primary key: ``ns``. At most one leader per namespace.
+    """
+
     __tablename__ = "gemstone_election_leader"
 
     ns: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -84,8 +101,12 @@ def _session_scope(session: Optional[Session]) -> Iterator[Session]:
 
 
 def register_candidate(candidate_id: UUID, ns: Optional[str] = None, *, session: Optional[Session] = None) -> None:
-    """
-    Register or refresh a candidate in the election namespace.
+    """Register or refresh a candidate in an election namespace.
+
+    Args:
+        candidate_id: Process identity UUID.
+        ns: Namespace (default ``"default"``).
+        session: Optional shared SQLAlchemy session.
     """
     n = _ns(ns)
     cid = str(candidate_id)
@@ -109,18 +130,25 @@ def register_candidate(candidate_id: UUID, ns: Optional[str] = None, *, session:
 
 
 def heartbeat(candidate_id: UUID, ns: Optional[str] = None, *, session: Optional[Session] = None) -> None:
-    """
-    Refresh a candidate heartbeat and extend its expiry window.
+    """Refresh candidate heartbeat and extend expiry.
 
-    If the candidate is missing, this behaves like register_candidate().
+    Equivalent to :func:`register_candidate` when the row already exists.
+
+    Args:
+        candidate_id: Process identity UUID.
+        ns: Namespace (default ``"default"``).
+        session: Optional shared SQLAlchemy session.
     """
     register_candidate(candidate_id, ns, session=session)
 
 
 def unregister_candidate(candidate_id: UUID, ns: Optional[str] = None, *, session: Optional[Session] = None) -> None:
-    """
-    Remove a candidate from the registry. If it is currently leader, clear the
-    leader row for faster failover (best-effort).
+    """Remove a candidate and clear leadership if it was leader.
+
+    Args:
+        candidate_id: Process identity UUID.
+        ns: Namespace (default ``"default"``).
+        session: Optional shared SQLAlchemy session.
     """
     n = _ns(ns)
     cid = str(candidate_id)
@@ -138,8 +166,14 @@ def unregister_candidate(candidate_id: UUID, ns: Optional[str] = None, *, sessio
 
 
 def list_candidates(ns: Optional[str] = None, *, session: Optional[Session] = None) -> list[UUID]:
-    """
-    Return the currently-active candidates in the namespace (expires_at > now).
+    """List active candidates (``expires_at > now``).
+
+    Args:
+        ns: Namespace (default ``"default"``).
+        session: Optional shared SQLAlchemy session.
+
+    Returns:
+        Sorted list of candidate UUIDs.
     """
     n = _ns(ns)
     now = _utcnow()
@@ -154,8 +188,15 @@ def list_candidates(ns: Optional[str] = None, *, session: Optional[Session] = No
 
 
 def is_leader(candidate_id: UUID, ns: Optional[str] = None, *, session: Optional[Session] = None) -> bool:
-    """
-    Return True if candidate_id holds an unexpired lease for the namespace.
+    """Return whether ``candidate_id`` holds an unexpired leader lease.
+
+    Args:
+        candidate_id: Process identity UUID.
+        ns: Namespace (default ``"default"``).
+        session: Optional shared SQLAlchemy session.
+
+    Returns:
+        ``True`` if this candidate is leader with ``lease_expires_at > now``.
     """
     n = _ns(ns)
     cid = str(candidate_id)
@@ -169,10 +210,18 @@ def is_leader(candidate_id: UUID, ns: Optional[str] = None, *, session: Optional
 
 
 def elect(candidate_id: UUID, ns: Optional[str] = None, *, session: Optional[Session] = None) -> UUID:
-    """
-    Attempt to acquire (or renew) leadership for candidate_id.
+    """Acquire or renew leadership and return the current leader UUID.
 
-    Returns the UUID of the current leader for the namespace after this call.
+    Leadership is taken when vacant, expired, or already held by the caller.
+    Does not preempt another candidate with an unexpired lease.
+
+    Args:
+        candidate_id: Process identity UUID attempting election.
+        ns: Namespace (default ``"default"``).
+        session: Optional shared SQLAlchemy session.
+
+    Returns:
+        UUID of the leader for the namespace after this call.
     """
     n = _ns(ns)
     cid = str(candidate_id)

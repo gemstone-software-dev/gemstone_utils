@@ -2,6 +2,8 @@
 # Copyright 2026,
 # gemstone_utils/experimental/secrets_resolver.py
 
+"""Experimental secret reference resolver for configuration bootstrap."""
+
 from __future__ import annotations
 
 import logging
@@ -33,7 +35,12 @@ _file_path_prefixes: Optional[tuple[Path, ...]] = None
 
 
 class BackendNotImplemented(RuntimeError):
-    """Secret reference uses a backend that is removed or not registered."""
+    """Reference uses a removed or unregistered backend prefix.
+
+    Attributes:
+        prefix: Normalized backend name from the reference.
+        reason: ``"removed"`` or ``"unregistered"``.
+    """
 
     def __init__(self, prefix: str, message: str, *, reason: str) -> None:
         self.prefix = prefix
@@ -42,7 +49,12 @@ class BackendNotImplemented(RuntimeError):
 
 
 class FilePathNotAllowed(ValueError):
-    """``file:`` path is not under an allowed prefix."""
+    """A ``file:`` path is outside the configured allowlist.
+
+    Attributes:
+        path: Resolved path string that was rejected.
+        allowed_prefixes: Effective allowlist prefix strings.
+    """
 
     def __init__(self, path: str, allowed_prefixes: frozenset[str]) -> None:
         self.path = path
@@ -72,9 +84,13 @@ _keyctx_resolver: Optional[Callable[[str], KeyContext]] = None
 
 
 def set_keyctx_resolver(func: Callable[[str], KeyContext]) -> None:
-    """
-    Register a resolver that, given a key id string (UUID), returns the correct KeyContext.
-    The application must call this at startup.
+    """Register resolver for encrypted wire values in secret strings.
+
+    Required before resolving values that match ``is_encrypted_prefix``.
+    Separate from ``EncryptedString.set_keyctx_resolver``.
+
+    Args:
+        func: Callable ``(keyid: str) -> KeyContext``.
     """
     global _keyctx_resolver
     _keyctx_resolver = func
@@ -140,12 +156,14 @@ def _warn_footgun_prefixes(resolved: Path, warned: set[Path]) -> None:
 
 
 def set_allowed_file_path_prefixes(prefixes: Sequence[PathLike]) -> None:
-    """
-    Replace the ``file:`` path allowlist.
+    """Replace the ``file:`` path allowlist entirely.
 
-    Until this is called, only paths under ``/app/secret`` are allowed. Prefixes must
-    be absolute and must not use ``~`` (no tilde expansion). Registering bare ``/etc``
-    or a filesystem root logs a warning but is not blocked.
+    Until called, only paths under ``/app/secret`` are allowed. Prefixes must
+    be absolute; ``~`` is rejected. Bare ``/etc`` or filesystem root logs a
+    warning but is not blocked.
+
+    Args:
+        prefixes: Absolute directory prefixes permitted for ``file:`` reads.
     """
     global _file_path_prefixes
     normalized: list[Path] = []
@@ -158,7 +176,11 @@ def set_allowed_file_path_prefixes(prefixes: Sequence[PathLike]) -> None:
 
 
 def allowed_file_path_prefixes() -> frozenset[str]:
-    """Resolved absolute prefix strings for the effective ``file:`` allowlist."""
+    """Return resolved absolute prefix strings for the ``file:`` allowlist.
+
+    Returns:
+        Frozenset of allowed prefix path strings (POSIX form).
+    """
     return frozenset(p.as_posix() for p in _effective_file_prefixes())
 
 
@@ -313,8 +335,20 @@ def register_backend(
     *,
     replace: bool = False,
 ) -> None:
-    """
-    Register a pluggable backend resolver for a prefix (without trailing ':').
+    """Register a pluggable backend for a reference prefix.
+
+    Built-in backends ``env``, ``file``, ``secret``, and ``literal`` are
+    pre-registered. Use ``literal:`` for opaque values containing colons.
+
+    Args:
+        prefix: Backend name without trailing colon (case-insensitive).
+        resolver: Callable ``(body: str) -> str | None``; ``None`` skips
+            post-processing.
+        replace: Allow replacing an existing registration when ``True``.
+
+    Raises:
+        ValueError: If ``prefix`` is empty or already registered (and not
+            ``replace``).
     """
     norm = prefix.strip().lower().rstrip(":")
     if not norm:
@@ -325,16 +359,34 @@ def register_backend(
 
 
 def unregister_backend(prefix: str) -> None:
+    """Remove a registered backend prefix.
+
+    Args:
+        prefix: Backend name without trailing colon.
+    """
     norm = prefix.strip().lower().rstrip(":")
     _backends.pop(norm, None)
 
 
 def is_backend_registered(prefix: str) -> bool:
+    """Return whether a backend prefix is registered.
+
+    Args:
+        prefix: Backend name without trailing colon.
+
+    Returns:
+        ``True`` if registered.
+    """
     norm = prefix.strip().lower().rstrip(":")
     return norm in _backends
 
 
 def list_backends() -> list[str]:
+    """Return sorted registered backend prefix names.
+
+    Returns:
+        List of normalized backend names (without colons).
+    """
     return sorted(_backends.keys())
 
 
@@ -351,16 +403,29 @@ def _postprocess_resolved(value: str | None) -> str | None:
 # main dispatcher
 # ---------------------------------------------------------------------------
 
-def resolve_secret(value: str):
-    """
-    Resolve a secret reference:
-      - env:VAR
-      - file:/path
-      - secret:name
-      - literal:opaque (substring after first colon, unchanged)
-      - pluggable backends (registered via register_backend)
-      - encrypted field
-      - plain string (no colon)
+def resolve_secret(value: str) -> str:
+    """Resolve a secret reference string to its plaintext value.
+
+    Supported forms:
+
+    * ``env:VAR`` — environment variable (cached, then scrubbed)
+    * ``file:/absolute/path`` — UTF-8 file under allowlist
+    * ``secret:name`` — container secret mount
+    * ``literal:opaque`` — substring after first colon unchanged
+    * Registered backends via :func:`register_backend`
+    * Encrypted-field wire strings (requires :func:`set_keyctx_resolver`)
+    * Plain strings without ``:`` returned unchanged
+
+    Args:
+        value: Reference string or plaintext.
+
+    Returns:
+        Resolved secret string.
+
+    Raises:
+        BackendNotImplemented: Unknown or removed prefix.
+        FilePathNotAllowed: ``file:`` path outside allowlist.
+        KeyError, FileNotFoundError, ValueError: Backend-specific failures.
     """
     if is_encrypted_prefix(value):
         keyctx = _resolve_keyctx_for_ciphertext(value)

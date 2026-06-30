@@ -19,13 +19,26 @@ else:
 
 
 def new_key_id() -> str:
-    """Return a new canonical UUIDv7 string for a DEK or KEK slot primary key."""
+    """Generate a new canonical UUIDv7 string.
+
+    Use for DEK or KEK slot primary keys (encrypted-field wire segment 2).
+
+    Returns:
+        Canonical UUID string (RFC 9562 UUIDv7).
+    """
     return str(_uuid7())
 
 
 def normalize_key_id(value: str) -> str:
-    """
-    Parse and return canonical 8-4-4-4-12 UUID string for ``value``.
-    Raises ``ValueError`` if not a valid UUID.
+    """Parse and canonicalize a UUID string.
+
+    Args:
+        value: UUID text in any accepted ``UUID`` form.
+
+    Returns:
+        Canonical 8-4-4-4-12 UUID string.
+
+    Raises:
+        ValueError: If ``value`` is not a valid UUID.
     """
     return str(UUID(value))

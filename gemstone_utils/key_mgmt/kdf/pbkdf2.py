@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: MPL-2.0
 # gemstone_utils/key_mgmt/kdf/pbkdf2.py
 
+"""PBKDF2-HMAC-SHA256 KDF params and registration."""
+
 from __future__ import annotations
 
 import os
@@ -15,6 +17,7 @@ from gemstone_utils.crypto import (
 
 from ..registry import register_kdf
 
+#: Registry id for persisted ``params["kdf"]``.
 NAME = "pbkdf2-hmac-sha256"
 
 DEFAULT_DERIVED_KEY_LENGTH = 32
@@ -26,9 +29,18 @@ def pbkdf2_params(
     iterations: int = 200_000,
     length: int = DEFAULT_DERIVED_KEY_LENGTH,
 ) -> Dict[str, Any]:
-    """
-    Build a ``params`` dict for :func:`~gemstone_utils.key_mgmt.derive_kek`
-    with explicit ``salt`` and PBKDF2 tuning.
+    """Build PBKDF2 params with explicit salt and tuning.
+
+    Args:
+        salt: Salt bytes (required).
+        iterations: PBKDF2 iteration count.
+        length: Derived key length in bytes.
+
+    Returns:
+        Params dict for ``derive_kek``.
+
+    Raises:
+        TypeError: If ``salt`` is not bytes-like.
     """
     if not isinstance(salt, (bytes, bytearray)):
         raise TypeError("salt must be bytes")
@@ -42,9 +54,13 @@ def pbkdf2_params(
 
 
 def recommended_pbkdf2_params(salt: Optional[bytes] = None) -> Dict[str, Any]:
-    """
-    Strong defaults for new PBKDF2-HMAC-SHA256 KDF rows (random 16-byte salt
-    when ``salt`` is omitted).
+    """Strong defaults for new PBKDF2-HMAC-SHA256 KDF rows.
+
+    Args:
+        salt: Optional fixed salt; random 16-byte salt when omitted.
+
+    Returns:
+        Params dict using ``DEFAULT_PBKDF2_ITERATIONS_STRONG``.
     """
     if salt is None:
         salt = os.urandom(16)

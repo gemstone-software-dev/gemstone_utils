@@ -31,14 +31,21 @@ from typing import Any, Dict, Optional, Protocol, runtime_checkable
 
 @runtime_checkable
 class RecommendedKdfParamsFn(Protocol):
-    """Callable shape for ``recommended_<algorithm>_params`` factories."""
+    """Callable shape for ``recommended_<algorithm>_params`` factories.
+
+    Implementations return a params dict for ``derive_kek``.
+    """
 
     def __call__(self, salt: Optional[bytes] = None) -> Dict[str, Any]:
         ...
 
 
 class HasKdfRegistryName(Protocol):
-    """Module-level registry id for a KDF algorithm package."""
+    """Module-level registry id for a KDF algorithm package.
+
+    Attributes:
+        NAME: String stored in persisted JSON as ``params["kdf"]``.
+    """
 
     NAME: str
 

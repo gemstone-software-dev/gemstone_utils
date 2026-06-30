@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: MPL-2.0
 # gemstone_utils/key_mgmt/__init__.py
 
+"""KEK derivation, wrap/unwrap, passphrase loading, and rotation helpers."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -17,10 +19,15 @@ from .registry import derive_kek, register_kdf
 
 
 def recommended_kdf_params(salt: Optional[bytes] = None) -> dict[str, Any]:
-    """
-    Params dict for the library's **current** recommended KDF (for new installs
-    and persisted rows). Today: PBKDF2-HMAC-SHA256 via
-    :func:`~gemstone_utils.key_mgmt.kdf.pbkdf2.recommended_pbkdf2_params`.
+    """Return params for the library's current recommended KDF.
+
+    Today: PBKDF2-HMAC-SHA256 via ``kdf.pbkdf2.recommended_pbkdf2_params``.
+
+    Args:
+        salt: Optional fixed salt; random 16-byte salt when omitted.
+
+    Returns:
+        Params dict suitable for ``derive_kek`` and ``set_kdf_params``.
     """
     return recommended_pbkdf2_params(salt=salt)
 
@@ -40,9 +47,18 @@ def init(
     check_plaintext: bytes,
     env_allowed: bool = False,
     env_var_name: Optional[str] = None,
-):
-    """
-    Configure the key management subsystem.
+) -> None:
+    """Configure module-level key management settings.
+
+    Must be called before ``make_kek_check_record``, ``verify_kek``, or
+    ``load_passphrase``.
+
+    Args:
+        secret_name: Name passed to ``resolve_secret("secret:...")``.
+        check_plaintext: Fixed plaintext bytes encrypted into the KEK-check blob.
+        env_allowed: Whether to fall back to ``env:`` when the secret mount fails.
+        env_var_name: Environment variable name for fallback (defaults to
+            ``secret_name``).
     """
     global SECRET_NAME, CHECK_PLAINTEXT, ENV_ALLOWED, ENV_VAR_NAME
 
@@ -58,9 +74,12 @@ def init(
 
 
 class KEKVerificationError(ValueError):
-    """
-    Raised when the KEK-check blob cannot be decrypted with the derived KEK.
-    Includes structured fields for Virgil to log cleanly.
+    """Raised when a derived KEK fails KEK-check decryption.
+
+    Attributes:
+        secret_name: Configured secret name from ``init()``.
+        last_updated_iso: UTC ISO timestamp of last passphrase rotation, or
+            ``"unknown"``.
     """
 
     def __init__(self, secret_name: str, last_updated_iso: str):
@@ -78,9 +97,17 @@ class KEKVerificationError(ValueError):
 
 
 def make_kek_check_record(kek: bytes, alg: str = "A256GCM") -> KeyRecord:
-    """
-    Create a :class:`~gemstone_utils.types.KeyRecord` with ``keyid is None``
-    containing the KEK-check blob (not a DEK).
+    """Build a KEK-check ``KeyRecord`` (``keyid is None``).
+
+    Args:
+        kek: Key-encryption key bytes.
+        alg: Symmetric wrap algorithm id.
+
+    Returns:
+        ``KeyRecord`` with encrypted ``CHECK_PLAINTEXT`` from ``init()``.
+
+    Raises:
+        RuntimeError: If ``init()`` was not called.
     """
     if CHECK_PLAINTEXT is None:
         raise RuntimeError("key_mgmt.init() must be called before use")
@@ -94,9 +121,17 @@ def verify_kek(
     record: KeyRecord,
     last_updated: Optional[datetime] = None,
 ) -> None:
-    """
-    Verify that the KEK decrypts the KEK-check record correctly.
-    Raises KEKVerificationError with structured fields if verification fails.
+    """Verify that ``kek`` decrypts the KEK-check record.
+
+    Args:
+        kek: Derived key-encryption key bytes.
+        record: KEK-check record (``keyid`` must be ``None``).
+        last_updated: Optional timestamp included in ``KEKVerificationError``.
+
+    Raises:
+        ValueError: If ``record`` is not a KEK-check record.
+        RuntimeError: If ``init()`` was not called.
+        KEKVerificationError: If decryption does not yield ``CHECK_PLAINTEXT``.
     """
     if record.keyid is not None:
         raise ValueError("verify_kek() requires a KEK-check record (keyid=None)")
@@ -124,20 +159,51 @@ def verify_kek(
 
 
 def unwrap_key(kek: bytes, record: KeyRecord) -> bytes:
-    """Decrypt the key using the KEK and the record's alg."""
+    """Decrypt a DEK from a wrapped ``KeyRecord``.
+
+    Args:
+        kek: Key-encryption key bytes.
+        record: DEK record (``keyid`` must be set).
+
+    Returns:
+        Unwrapped key bytes.
+
+    Raises:
+        ValueError: If ``record`` is a KEK-check record.
+    """
     if record.keyid is None:
         raise ValueError("unwrap_key() called on KEK-check record")
     return decrypt_alg(record.alg, kek, record.encrypted_key, record.params)
 
 
 def wrap_key(kek: bytes, key: bytes, alg: str = "A256GCM") -> KeyRecord:
-    """Encrypt a key using the KEK; caller sets ``keyid`` on the returned record."""
+    """Encrypt key material under a KEK.
+
+    Args:
+        kek: Key-encryption key bytes.
+        key: Plaintext key bytes to wrap.
+        alg: Symmetric wrap algorithm id.
+
+    Returns:
+        ``KeyRecord`` with ``keyid=None``; caller sets ``keyid`` when persisting.
+    """
     blob, sym_params = encrypt_alg(alg, kek, key, None)
     return KeyRecord(keyid=None, alg=alg, encrypted_key=blob, params=sym_params)
 
 
 def load_keyctx(kek: bytes, record: KeyRecord) -> KeyContext:
-    """Produce a KeyContext from a KEK + KeyRecord (DEK record only)."""
+    """Build a ``KeyContext`` from a KEK and DEK ``KeyRecord``.
+
+    Args:
+        kek: Key-encryption key bytes.
+        record: DEK record (``keyid`` must be set).
+
+    Returns:
+        ``KeyContext`` with unwrapped key and metadata from ``record``.
+
+    Raises:
+        ValueError: If ``record`` is a KEK-check record.
+    """
     if record.keyid is None:
         raise ValueError("load_keyctx() requires a DEK KeyRecord (keyid set)")
     key = unwrap_key(kek, record)
@@ -150,9 +216,17 @@ def load_keyctx(kek: bytes, record: KeyRecord) -> KeyContext:
 
 
 def load_passphrase() -> str:
-    """
-    Load the Vault Passphrase using the standard secret resolver.
-    Tries secret:{SECRET_NAME}, then env:{ENV_VAR_NAME} if ENV_ALLOWED.
+    """Load the vault passphrase via ``resolve_secret``.
+
+    Tries ``secret:{SECRET_NAME}``, then ``env:{ENV_VAR_NAME}`` when
+    ``ENV_ALLOWED`` is true.
+
+    Returns:
+        Passphrase string.
+
+    Raises:
+        RuntimeError: If ``init()`` was not called.
+        ValueError: If neither configured source resolves.
     """
     if SECRET_NAME is None:
         raise RuntimeError("key_mgmt.init() must be called before use")
@@ -190,9 +264,20 @@ def derive_and_verify_kek(
     kek_check_record: KeyRecord,
     last_updated: Optional[datetime] = None,
 ) -> bytes:
-    """
-    Derive KEK from passphrase + KDF params, then verify via KEK-check.
-    Returns KEK bytes or raises KEKVerificationError.
+    """Derive a KEK and verify it against the KEK-check record.
+
+    Args:
+        passphrase: Vault passphrase.
+        kdf_params: Persisted KDF params dict (must include ``"kdf"``).
+        kek_check_record: KEK-check ``KeyRecord``.
+        last_updated: Optional timestamp for ``KEKVerificationError``.
+
+    Returns:
+        Verified KEK bytes.
+
+    Raises:
+        KEKVerificationError: If the check blob does not decrypt correctly.
+        ValueError: If KDF params are invalid.
     """
     kek = derive_kek(passphrase, kdf_params)
     verify_kek(kek, kek_check_record, last_updated=last_updated)
@@ -205,11 +290,18 @@ def reencrypt_keys(
     records: Iterable[KeyRecord],
     new_alg: Optional[str] = None,
 ) -> list[KeyRecord]:
-    """
-    Re-encrypt all keys under a new KEK.
-    If new_alg is provided, rewrap using that algorithm.
-    Otherwise preserve each record's existing algorithm.
-    Skips KEK-check records (``keyid is None``).
+    """Re-wrap DEK records under a new KEK.
+
+    Args:
+        old_kek: Current key-encryption key.
+        new_kek: New key-encryption key.
+        records: Iterable of DEK ``KeyRecord`` instances.
+        new_alg: Optional wrap algorithm; preserves each record's ``alg`` when
+            omitted.
+
+    Returns:
+        New ``KeyRecord`` list with updated ciphertext. KEK-check records
+        (``keyid is None``) are skipped.
     """
     updated = []
 
@@ -239,14 +331,16 @@ def rotate_kek(
     records: Iterable[KeyRecord],
     new_alg: Optional[str] = None,
 ) -> tuple[KeyRecord, list[KeyRecord]]:
-    """
-    Rotate the KEK:
-      - Rewrap all keys under the new KEK
-      - Create a new KEK-check record
-      - Optionally update the encryption algorithm for all keys
+    """Rotate KEK: rewrap DEKs and produce a new KEK-check record.
+
+    Args:
+        old_kek: Current key-encryption key.
+        new_kek: New key-encryption key.
+        records: Iterable of DEK ``KeyRecord`` instances.
+        new_alg: Optional wrap algorithm for all DEK records.
 
     Returns:
-      (new_kek_check_record, updated_key_records)
+        Tuple ``(new_kek_check_record, updated_dek_records)``.
     """
     new_check = make_kek_check_record(new_kek)
     updated = reencrypt_keys(old_kek, new_kek, records, new_alg=new_alg)

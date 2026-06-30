@@ -2,6 +2,8 @@
 # Copyright 2026, Clinton Bunch. All rights reserved.
 # gemstone_utils/encrypted_fields.py
 
+"""Encrypted-field wire format and string encrypt/decrypt helpers."""
+
 from __future__ import annotations
 
 import json
@@ -21,6 +23,14 @@ from .types import KeyContext
 
 
 def is_encrypted_prefix(value: str) -> bool:
+    """Return whether ``value`` looks like an encrypted-field wire string.
+
+    Args:
+        value: Candidate string.
+
+    Returns:
+        ``True`` if ``value`` starts with ``$<registered_alg>$...``.
+    """
     if not isinstance(value, str) or not value.startswith("$"):
         return False
     parts = value.split("$")
@@ -63,6 +73,22 @@ def format_encrypted_field(
     blob: bytes,
     params: Optional[Dict[str, Any]] = None,
 ) -> str:
+    """Build the five-part encrypted-field wire string.
+
+    Format: ``$<alg>$<keyid>$<params_b64>$<blob_b64>``.
+
+    Args:
+        alg: Registered symmetric algorithm id.
+        keyid: Canonical UUID string for the logical DEK.
+        blob: Ciphertext blob.
+        params: Algorithm parameters JSON object (default empty dict).
+
+    Returns:
+        Wire string suitable for storage or ``resolve_secret`` post-processing.
+
+    Raises:
+        ValueError: If ``alg`` is unsupported or ``keyid`` is not a valid UUID.
+    """
     require_supported_sym_alg(alg)
     p = {} if params is None else params
     kid = normalize_key_id(keyid)
@@ -70,6 +96,20 @@ def format_encrypted_field(
 
 
 def parse_encrypted_field(value: str) -> Tuple[str, str, Dict[str, Any], bytes]:
+    """Parse a five-part (or legacy four-part) encrypted-field wire string.
+
+    Args:
+        value: Wire string beginning with ``$``.
+
+    Returns:
+        ``(alg_id, keyid, params, blob)`` where ``keyid`` is canonical UUID text.
+
+    Raises:
+        ValueError: If the format is invalid or the algorithm id is unsupported.
+
+    Warns:
+        DeprecationWarning: For legacy four-part wires without a params segment.
+    """
     parts = value.split("$")
     if parts[0] != "":
         raise ValueError("invalid encrypted field format")
@@ -105,6 +145,15 @@ def _validate_alg_params(alg_id: str, params: Dict[str, Any]) -> None:
 
 
 def encrypt_string(plaintext: Optional[str], keyctx: KeyContext) -> Optional[str]:
+    """Encrypt a UTF-8 string with ``keyctx``.
+
+    Args:
+        plaintext: String to encrypt, or ``None``.
+        keyctx: Active data key context.
+
+    Returns:
+        Wire string, or ``None`` if ``plaintext`` is ``None``.
+    """
     if plaintext is None:
         return None
     blob, out_params = encrypt_alg(
@@ -114,6 +163,18 @@ def encrypt_string(plaintext: Optional[str], keyctx: KeyContext) -> Optional[str
 
 
 def decrypt_string(value: Optional[str], keyctx: KeyContext) -> Optional[str]:
+    """Decrypt a wire string with ``keyctx``.
+
+    Args:
+        value: Wire string, or ``None``.
+        keyctx: Data key context matching segment 2 and algorithm.
+
+    Returns:
+        Decrypted UTF-8 string, or ``None`` if ``value`` is ``None``.
+
+    Raises:
+        ValueError: If algorithm or key id does not match ``keyctx``, or decrypt fails.
+    """
     if value is None:
         return None
 

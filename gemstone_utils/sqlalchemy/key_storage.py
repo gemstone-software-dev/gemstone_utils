@@ -2,6 +2,8 @@
 # Copyright 2026, Clinton Bunch. All rights reserved.
 # gemstone_utils/sqlalchemy/key_storage.py
 
+"""Persisted KDF params, KEK canaries, wrapped DEKs, and resolver helpers."""
+
 from __future__ import annotations
 
 import json
@@ -31,11 +33,10 @@ def _utcnow() -> datetime:
 
 
 class GemstoneKeyKdf(GemstoneDB):
-    """
-    KEK slot: persisted KDF parameters, KEK canary wire, and app re-encrypt flag.
+    """KEK slot: persisted KDF JSON, canary wire, and re-encrypt flag.
 
-    ``key_id`` is the KEK slot id (canonical UUID string) referenced by the
-    segment ``keyid`` inside stored wire strings for :class:`GemstoneKeyRecord`.
+    ``key_id`` is the KEK slot id (canonical UUID) referenced as segment 2
+    inside wrapped DEK and canary wire strings.
     """
 
     __tablename__ = "gemstone_key_kdf"
@@ -49,12 +50,11 @@ class GemstoneKeyKdf(GemstoneDB):
 
 
 class GemstoneKeyRecord(GemstoneDB):
-    """
-    Wrapped DEK material only (no KEK canary).
+    """Wrapped DEK row (no KEK canary).
 
-    ``wrapped`` uses the same five-part wire format as encrypted columns; the
-    segment ``keyid`` is the KEK slot (row in :class:`GemstoneKeyKdf`), not this PK.
-    ``data_alg`` is the algorithm for application field encryption (``KeyContext.alg``).
+    ``wrapped`` uses the five-part encrypted-field wire format; segment 2 is
+    the KEK slot id (``GemstoneKeyKdf.key_id``), not this row's primary key.
+    ``data_alg`` is the algorithm for application field encryption.
     """
 
     __tablename__ = "gemstone_key_record"
@@ -68,10 +68,15 @@ class GemstoneKeyRecord(GemstoneDB):
 
 
 def new_kdf_params(salt: Optional[bytes] = None) -> dict:
-    """
-    Params dict for :func:`~gemstone_utils.key_mgmt.derive_kek` and
-    :func:`set_kdf_params`, using the library's recommended KDF (same as
-    :func:`~gemstone_utils.key_mgmt.recommended_kdf_params`).
+    """Return recommended KDF params for new KEK slots.
+
+    Alias of :func:`gemstone_utils.key_mgmt.recommended_kdf_params`.
+
+    Args:
+        salt: Optional fixed salt.
+
+    Returns:
+        Params dict for :func:`derive_kek` and :func:`set_kdf_params`.
     """
     return recommended_kdf_params(salt=salt)
 
@@ -82,13 +87,31 @@ def wire_wrap(
     plaintext_key_material: bytes,
     alg: str = "A256GCM",
 ) -> str:
-    """Wrap key material as the standard encrypted-field wire string."""
+    """Wrap key material as an encrypted-field wire string.
+
+    Args:
+        wrap_key_id: KEK slot id (wire segment 2).
+        kek: Key-encryption key bytes.
+        plaintext_key_material: Key bytes to wrap.
+        alg: Symmetric wrap algorithm id.
+
+    Returns:
+        Five-part wire string.
+    """
     blob, sym_params = encrypt_alg(alg, kek, plaintext_key_material, None)
     return format_encrypted_field(alg, wrap_key_id, blob, sym_params)
 
 
 def wire_to_keyrecord(logical_key_id: Optional[str], wire: str) -> KeyRecord:
-    """Parse a stored wire string into a :class:`~gemstone_utils.types.KeyRecord`."""
+    """Parse a wire string into a ``KeyRecord``.
+
+    Args:
+        logical_key_id: DEK id to store on the record (may be ``None`` for canary).
+        wire: Five-part encrypted-field wire string.
+
+    Returns:
+        ``KeyRecord`` with ciphertext and params from the wire.
+    """
     alg_id, _segment_keyid, params, blob = parse_encrypted_field(wire)
     return KeyRecord(
         keyid=logical_key_id, alg=alg_id, encrypted_key=blob, params=params
@@ -96,19 +119,48 @@ def wire_to_keyrecord(logical_key_id: Optional[str], wire: str) -> KeyRecord:
 
 
 def keyrecord_to_wire(record: KeyRecord, wrap_key_id: str) -> str:
-    """Serialize a :class:`~gemstone_utils.types.KeyRecord` to wire form."""
+    """Serialize a ``KeyRecord`` to wire form.
+
+    Args:
+        record: Wrapped key record.
+        wrap_key_id: KEK slot id for wire segment 2.
+
+    Returns:
+        Five-part wire string.
+    """
     return format_encrypted_field(
         record.alg, wrap_key_id, record.encrypted_key, record.params
     )
 
 
 def unwrap_stored_key(kek: bytes, logical_key_id: str, wire: str) -> bytes:
-    """Unwrap a DEK row. ``logical_key_id`` must match the row's primary key."""
+    """Unwrap DEK bytes from a stored wire string.
+
+    Args:
+        kek: Key-encryption key bytes.
+        logical_key_id: DEK row primary key (must match persisted id).
+        wire: Wrapped DEK wire string.
+
+    Returns:
+        Unwrapped key bytes.
+    """
     rec = wire_to_keyrecord(logical_key_id, wire)
     return unwrap_key(kek, rec)
 
 
 def get_kdf_params(session: Session, key_id: str) -> dict:
+    """Load persisted KDF params for a KEK slot.
+
+    Args:
+        session: SQLAlchemy session.
+        key_id: KEK slot primary key.
+
+    Returns:
+        Parsed params dict.
+
+    Raises:
+        KeyError: If no row exists for ``key_id``.
+    """
     row = session.get(GemstoneKeyKdf, key_id)
     if row is None:
         raise KeyError(f"no KDF params row for key_id={key_id}")
@@ -116,6 +168,16 @@ def get_kdf_params(session: Session, key_id: str) -> dict:
 
 
 def set_kdf_params(session: Session, key_id: str, params: dict) -> None:
+    """Insert or update KDF params for a KEK slot.
+
+    Args:
+        session: SQLAlchemy session.
+        key_id: KEK slot primary key.
+        params: KDF params dict (must include supported ``"kdf"``).
+
+    Raises:
+        ValueError: If ``params["kdf"]`` is missing or unsupported.
+    """
     kdf_name = params.get("kdf")
     if not kdf_name or not is_supported_kdf(kdf_name):
         raise ValueError(f"Unsupported KDF for persisted params: {kdf_name!r}")
@@ -139,7 +201,18 @@ def set_kdf_params(session: Session, key_id: str, params: dict) -> None:
 
 
 def set_kek_canary(session: Session, key_id: str, canary_wrapped: str) -> None:
-    """Set ``canary_wrapped`` on the KEK slot row. Call :func:`set_kdf_params` first."""
+    """Set ``canary_wrapped`` on a KEK slot row.
+
+    Call :func:`set_kdf_params` first to create the row.
+
+    Args:
+        session: SQLAlchemy session.
+        key_id: KEK slot primary key.
+        canary_wrapped: KEK-check wire string.
+
+    Raises:
+        KeyError: If the KEK slot row does not exist.
+    """
     row = session.get(GemstoneKeyKdf, key_id)
     if row is None:
         raise KeyError(f"no KDF row for key_id={key_id}; call set_kdf_params first")
@@ -149,7 +222,16 @@ def set_kek_canary(session: Session, key_id: str, canary_wrapped: str) -> None:
 
 
 def set_app_reencrypt_pending(session: Session, key_id: str, pending: bool) -> None:
-    """Set ``app_reencrypt_pending`` on the KEK slot row."""
+    """Set the application re-encrypt flag on a KEK slot.
+
+    Args:
+        session: SQLAlchemy session.
+        key_id: KEK slot primary key.
+        pending: New flag value.
+
+    Raises:
+        KeyError: If the KEK slot row does not exist.
+    """
     row = session.get(GemstoneKeyKdf, key_id)
     if row is None:
         raise KeyError(f"no KDF row for key_id={key_id}")
@@ -159,6 +241,18 @@ def set_app_reencrypt_pending(session: Session, key_id: str, pending: bool) -> N
 
 
 def get_wrapped(session: Session, logical_key_id: str) -> str:
+    """Return the wrapped wire string for a DEK row.
+
+    Args:
+        session: SQLAlchemy session.
+        logical_key_id: DEK primary key.
+
+    Returns:
+        ``GemstoneKeyRecord.wrapped`` text.
+
+    Raises:
+        KeyError: If no DEK row exists.
+    """
     row = session.get(GemstoneKeyRecord, logical_key_id)
     if row is None:
         raise KeyError(f"no key record for key_id={logical_key_id}")
@@ -168,6 +262,15 @@ def get_wrapped(session: Session, logical_key_id: str) -> str:
 def iter_wrapped_rows(
     session: Session, key_ids: Optional[Iterable[str]] = None
 ) -> Iterator[GemstoneKeyRecord]:
+    """Iterate DEK rows ordered by ``key_id``.
+
+    Args:
+        session: SQLAlchemy session.
+        key_ids: Optional subset of DEK ids; all rows when omitted.
+
+    Yields:
+        ``GemstoneKeyRecord`` instances.
+    """
     stmt: Select[GemstoneKeyRecord] = select(GemstoneKeyRecord).order_by(
         GemstoneKeyRecord.key_id
     )
@@ -177,6 +280,14 @@ def iter_wrapped_rows(
 
 
 def iter_kek_slots(session: Session) -> Iterator[GemstoneKeyKdf]:
+    """Iterate KEK slot rows ordered by ``key_id``.
+
+    Args:
+        session: SQLAlchemy session.
+
+    Yields:
+        ``GemstoneKeyKdf`` instances.
+    """
     stmt = select(GemstoneKeyKdf).order_by(GemstoneKeyKdf.key_id)
     yield from session.scalars(stmt)
 
@@ -189,14 +300,17 @@ def put_keyrecord(
     data_alg: str = RECOMMENDED_DATA_ALG,
     is_active: bool = False,
 ) -> None:
-    """
-    Insert a single DEK record (new row on rotation).
+    """Insert a new DEK row.
 
-    Raises if ``key_id`` already exists. When ``is_active`` is True, clears
-    ``is_active`` on all other DEK rows in this session.
+    Args:
+        session: SQLAlchemy session.
+        key_id: New DEK primary key (must not exist).
+        wrapped: Five-part wire string.
+        data_alg: Field encryption algorithm id for ``KeyContext.alg``.
+        is_active: When ``True``, clears ``is_active`` on other DEK rows.
 
-    ``data_alg`` defaults to :func:`~gemstone_utils.crypto.recommended_data_alg`
-    (same as :data:`~gemstone_utils.crypto.RECOMMENDED_DATA_ALG`).
+    Raises:
+        ValueError: If ``key_id`` exists or ``data_alg`` is unsupported.
     """
     if not is_supported_sym_alg(data_alg):
         raise ValueError(f"Unsupported symmetric alg for data_alg: {data_alg!r}")
@@ -229,16 +343,26 @@ def rewrap_key_records(
     key_ids: Optional[Iterable[str]] = None,
     new_alg: Optional[str] = None,
 ) -> None:
-    """
-    Unwrap stored DEKs and KEK canaries with ``old_kek`` and re-wrap with ``new_kek``,
-    updating wire strings in place.
+    """Rewrap DEK and canary wires in place under a new KEK.
 
     Run inside an explicit transaction, for example::
 
         with session.begin():
             rewrap_key_records(session, ...)
 
-    The session is not committed by this function.
+    Does not commit the session.
+
+    Args:
+        session: SQLAlchemy session.
+        old_kek: Current key-encryption key.
+        new_kek: New key-encryption key.
+        old_wrap_key_id: KEK slot id in existing wire segment 2.
+        new_wrap_key_id: KEK slot id for updated wires.
+        key_ids: Optional DEK subset; all DEK rows when omitted.
+        new_alg: Optional new wrap algorithm for DEK blobs.
+
+    Raises:
+        ValueError: If required rows are missing or wire segment 2 mismatches.
     """
     kek_rows = list(iter_kek_slots(session))
     if not kek_rows:
@@ -290,14 +414,19 @@ def make_keyctx_resolver(
     load_passphrase: Callable[[], str] = default_load_passphrase,
     max_cache_size: int = 0,
 ) -> Callable[[str], KeyContext]:
-    """
-    Build a resolver suitable for :meth:`~gemstone_utils.sqlalchemy.encrypted_type.EncryptedString.set_keyctx_resolver`.
+    """Build a ``KeyContext`` resolver for ``EncryptedString``.
 
-    Loads the DEK row by logical ``keyid`` string, derives the KEK from persisted KDF
-    params for the wire's segment keyid, and returns :class:`~gemstone_utils.types.KeyContext`
-    with ``alg`` from the row's ``data_alg``.
+    Loads the DEK row, derives the KEK from persisted KDF params and
+    passphrase, unwraps the DEK, and returns ``KeyContext`` with ``alg`` from
+    ``data_alg``.
 
-    When ``max_cache_size > 0``, resolved contexts are cached in-process (best-effort).
+    Args:
+        get_session: Callable returning a new session (default ``get_session``).
+        load_passphrase: Callable returning the vault passphrase.
+        max_cache_size: When ``> 0``, cache resolved contexts in-process.
+
+    Returns:
+        Resolver callable ``(dek_keyid: str) -> KeyContext``.
     """
     cache: Optional[OrderedDict[str, KeyContext]] = (
         OrderedDict() if max_cache_size > 0 else None
