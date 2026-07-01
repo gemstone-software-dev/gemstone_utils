@@ -15,11 +15,25 @@ Pre-release versions follow **[PEP 440](https://packaging.python.org/en/latest/s
 
 ## Unreleased
 
-### v0.5.0 (toward next alpha)
+Nothing yet.
+
+---
+
+## v0.5.0a2 (alpha)
+
+**Tag:** `v0.5.0a2`  
+**PyPI:** `pip install gemstone_utils==0.5.0a2` or `pip install --pre gemstone_utils` (see [pre-release install behavior](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions)).
+
+### Overview
+
+Second **alpha** toward **v0.5.0**. Restores v0.4.1 ergonomics for colon-containing config values while keeping 0.5.0a1 security hardening (`file:` allowlist, `secret:` name rules, removed `azexp`, registry allowlists). API and behavior may still change before the stable release; see the pre-release naming section above.
+
+### Changes since v0.5.0a1
 
 #### Fixes / behavior
 
-- **Colon dispatch default restored:** Unknown colon prefixes pass through unchanged again (v0.4.1 behavior). Only registered backends and explicitly removed prefixes (e.g. `azexp:`) are dispatched. **`set_strict_prefix_dispatch(True)`** opts into fail-loud behavior for secret-only fields.
+- **Colon dispatch default restored:** Unknown colon prefixes pass through unchanged again (v0.4.1 behavior). Only registered backends and explicitly removed prefixes (e.g. `azexp:`) are dispatched.
+- **`set_strict_prefix_dispatch(True)`** — opt-in fail-loud behavior for secret-only fields (unknown prefixes raise **`BackendNotImplemented`** with `reason="unregistered"`).
 - **`literal:`** remains available as an optional explicit marker for opaque values (e.g. file URLs in strict deployments).
 
 ---

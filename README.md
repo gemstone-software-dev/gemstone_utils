@@ -90,7 +90,7 @@ pip install 'gemstone_utils[dev]'
 Or from a source tarball:
 
 ```
-pip install gemstone_utils-0.5.0a1.tar.gz
+pip install gemstone_utils-0.5.0a2.tar.gz
 ```
 
 ---
