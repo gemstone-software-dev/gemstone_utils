@@ -11,11 +11,11 @@ The module `gemstone_utils.experimental.secrets_resolver` resolves string refere
 | `env:VAR` | Read `os.environ[VAR]`, cache, then **delete** the variable from the environment (scrub). |
 | `file:/path` | Read UTF-8 file once, strip, cache. Path must be **absolute** (no `~`). Allowed only under configured prefixes (default: `/app/secret`). |
 | `secret:name` | Search `CREDENTIALS_DIRECTORY`, `/run/secrets/`, `/var/run/secrets/`. Name must start with a letter, end with a letter or digit, and contain only `[A-Za-z0-9_-]`. |
-| `literal:opaque` | Return the substring after the first colon unchanged (URLs, connection strings, etc.). |
+| `literal:opaque` | Optional explicit marker: return the substring after the first colon unchanged (URLs, connection strings, etc.). |
 
 Custom prefixes can be registered with `register_backend(prefix, resolver, ...)`.
 
-Values containing `:` must use one of the prefixes above (or a registered backend). Plain strings without `:` are returned unchanged.
+Strings **without** `:` are returned unchanged. Strings **with** `:` are dispatched only when the prefix matches a registered backend (or is explicitly removed). Other colon-containing values (e.g. `team:name`, `http://host/path`) **pass through unchanged** by default — useful when `resolve_secret` is applied to mixed config fields. Call **`set_strict_prefix_dispatch(True)`** at startup to restore fail-loud behavior for unknown prefixes.
 
 ## Path security
 
@@ -40,10 +40,10 @@ set_allowed_file_path_prefixes(["/etc/myapp/secrets"])
 
 ## `BackendNotImplemented`
 
-Subclass of **`RuntimeError`**. Raised when a reference names a removed or unregistered backend.
+Subclass of **`RuntimeError`**. Raised when a reference names a **removed** backend, or an **unregistered** backend when strict dispatch is enabled.
 
-- **`reason="removed"`** — prefix was removed (e.g. `azexp:` in v0.5.0).
-- **`reason="unregistered"`** — unknown prefix; use `literal:...` for opaque values or `register_backend`.
+- **`reason="removed"`** — prefix was removed (e.g. `azexp:` in v0.5.0). Always raises, even when strict dispatch is off.
+- **`reason="unregistered"`** — unknown prefix when **`set_strict_prefix_dispatch(True)`**; use `literal:...` for explicit opaque values or `register_backend`.
 - **`prefix`** — normalized backend name from the reference.
 
 ## Encrypted wire values (`$A256GCM$...`)
@@ -57,6 +57,8 @@ If the resolved string looks like an encrypted field (`is_encrypted_prefix`), it
 
 - **`set_keyctx_resolver(func: Callable[[str], KeyContext])`** — must be called before resolving encrypted secrets.
 - **`set_allowed_file_path_prefixes(prefixes)`** — replace the `file:` path allowlist (default `/app/secret` only).
+- **`set_strict_prefix_dispatch(strict: bool)`** — when `True`, unknown colon prefixes raise **`BackendNotImplemented`** (default `False`: pass through unchanged).
+- **`strict_prefix_dispatch_enabled() -> bool`** — whether strict dispatch is active.
 - **`allowed_file_path_prefixes() -> frozenset[str]`** — resolved allowlist prefixes for introspection.
 - **`resolve_secret(value: str) -> str`** — dispatches on prefix or decrypts encrypted blobs.
 - **`register_backend`**, **`unregister_backend`**, **`is_backend_registered`**, **`list_backends`** — pluggable backend registry (built-ins `env`, `file`, `secret`, `literal` are pre-registered).

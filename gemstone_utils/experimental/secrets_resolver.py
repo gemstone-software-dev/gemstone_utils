@@ -81,6 +81,7 @@ _cache: dict[str, str] = {}
 _backends: dict[str, Callable[[str], str | None]] = {}
 
 _keyctx_resolver: Optional[Callable[[str], KeyContext]] = None
+_strict_prefix_dispatch: bool = False
 
 
 def set_keyctx_resolver(func: Callable[[str], KeyContext]) -> None:
@@ -94,6 +95,34 @@ def set_keyctx_resolver(func: Callable[[str], KeyContext]) -> None:
     """
     global _keyctx_resolver
     _keyctx_resolver = func
+
+
+def set_strict_prefix_dispatch(strict: bool) -> None:
+    """Enable or disable strict colon-prefix dispatch.
+
+    When ``True``, values with a ``:`` whose prefix is not a registered backend
+    and not explicitly removed raise :class:`BackendNotImplemented`. When ``False``
+    (default), such values pass through unchanged — useful when
+    :func:`resolve_secret` is applied to mixed config fields (URLs, domain
+    ``prefix:value`` syntax, etc.).
+
+    Call once at application startup before resolving secrets.
+
+    Args:
+        strict: Whether unknown colon prefixes should raise.
+    """
+    global _strict_prefix_dispatch
+    _strict_prefix_dispatch = strict
+
+
+def strict_prefix_dispatch_enabled() -> bool:
+    """Return whether strict colon-prefix dispatch is enabled.
+
+    Returns:
+        ``True`` if :func:`set_strict_prefix_dispatch` was called with
+        ``True``.
+    """
+    return _strict_prefix_dispatch
 
 
 def _resolve_keyctx_for_ciphertext(value: str) -> KeyContext:
@@ -338,7 +367,8 @@ def register_backend(
     """Register a pluggable backend for a reference prefix.
 
     Built-in backends ``env``, ``file``, ``secret``, and ``literal`` are
-    pre-registered. Use ``literal:`` for opaque values containing colons.
+    pre-registered. Use ``literal:`` as an optional explicit marker for opaque
+    values containing colons.
 
     Args:
         prefix: Backend name without trailing colon (case-insensitive).
@@ -411,10 +441,12 @@ def resolve_secret(value: str) -> str:
     * ``env:VAR`` — environment variable (cached, then scrubbed)
     * ``file:/absolute/path`` — UTF-8 file under allowlist
     * ``secret:name`` — container secret mount
-    * ``literal:opaque`` — substring after first colon unchanged
+    * ``literal:opaque`` — substring after first colon unchanged (optional)
     * Registered backends via :func:`register_backend`
     * Encrypted-field wire strings (requires :func:`set_keyctx_resolver`)
     * Plain strings without ``:`` returned unchanged
+    * Other strings with ``:`` returned unchanged unless
+      :func:`set_strict_prefix_dispatch` is ``True``
 
     Args:
         value: Reference string or plaintext.
@@ -423,7 +455,8 @@ def resolve_secret(value: str) -> str:
         Resolved secret string.
 
     Raises:
-        BackendNotImplemented: Unknown or removed prefix.
+        BackendNotImplemented: Removed prefix, or unknown prefix when strict
+            dispatch is enabled.
         FilePathNotAllowed: ``file:`` path outside allowlist.
         KeyError, FileNotFoundError, ValueError: Backend-specific failures.
     """
@@ -443,12 +476,15 @@ def resolve_secret(value: str) -> str:
     if norm in _REMOVED_BACKENDS:
         raise BackendNotImplemented(norm, _REMOVED_BACKENDS[norm], reason="removed")
 
-    raise BackendNotImplemented(
-        norm,
-        "no backend registered; use register_backend(...), "
-        "a built-in prefix (env, file, secret), or literal:... for opaque values",
-        reason="unregistered",
-    )
+    if _strict_prefix_dispatch:
+        raise BackendNotImplemented(
+            norm,
+            "no backend registered; use register_backend(...), "
+            "a built-in prefix (env, file, secret), or literal:... for opaque values",
+            reason="unregistered",
+        )
+
+    return value
 
 
 # Register built-ins.

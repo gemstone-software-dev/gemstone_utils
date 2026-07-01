@@ -13,15 +13,18 @@ from gemstone_utils.experimental.secrets_resolver import (
     allowed_file_path_prefixes,
     resolve_secret,
     set_allowed_file_path_prefixes,
+    set_strict_prefix_dispatch,
 )
 
 
 @pytest.fixture(autouse=True)
 def _reset_resolver_state():
     secrets_resolver._file_path_prefixes = None
+    secrets_resolver._strict_prefix_dispatch = False
     secrets_resolver._cache.clear()
     yield
     secrets_resolver._file_path_prefixes = None
+    secrets_resolver._strict_prefix_dispatch = False
     secrets_resolver._cache.clear()
 
 
@@ -39,14 +42,28 @@ def test_literal_preserves_removed_prefix_text():
     assert resolve_secret(value) == "azexp:https://vault.vault.azure.net/secrets/foo"
 
 
-def test_unregistered_prefix_raises():
+def test_unregistered_prefix_passes_through_by_default():
+    assert resolve_secret("foo:bar") == "foo:bar"
+    assert resolve_secret("team:name") == "team:name"
+    assert resolve_secret("id:550e8400-e29b-41d4-a716-446655440000") == (
+        "id:550e8400-e29b-41d4-a716-446655440000"
+    )
+
+
+def test_http_passes_through_by_default():
+    assert resolve_secret("http://example.com") == "http://example.com"
+
+
+def test_unregistered_prefix_raises_when_strict():
+    set_strict_prefix_dispatch(True)
     with pytest.raises(BackendNotImplemented) as exc_info:
         resolve_secret("foo:bar")
     assert exc_info.value.prefix == "foo"
     assert exc_info.value.reason == "unregistered"
 
 
-def test_http_without_literal_raises():
+def test_http_raises_when_strict():
+    set_strict_prefix_dispatch(True)
     with pytest.raises(BackendNotImplemented) as exc_info:
         resolve_secret("http://example.com")
     assert exc_info.value.prefix == "http"
@@ -61,6 +78,7 @@ def test_removed_azexp_raises():
 
 
 def test_backend_not_implemented_is_runtime_error():
+    set_strict_prefix_dispatch(True)
     with pytest.raises(RuntimeError):
         resolve_secret("foo:bar")
 

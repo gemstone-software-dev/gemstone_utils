@@ -67,7 +67,7 @@ Supports:
 - `env:` — environment variables (cached + scrubbed)
 - `file:` — read from filesystem
 - `secret:` — systemd / container secret directories (`CREDENTIALS_DIRECTORY`, `/run/secrets/`)
-- `literal:` — opaque value (substring after first colon; use for URLs and strings with colons)
+- `literal:` — optional explicit marker (substring after first colon returned unchanged; use for file URLs when desired)
 - pluggable backends via `register_backend`
 - `$A256GCM$keyid$base64(json)$base64(blob)` encrypted values (requires `secrets_resolver.set_keyctx_resolver`)
 
@@ -245,7 +245,7 @@ The name must **start with a letter**, **end with a letter or digit**, and conta
 For Azure Container Apps, Cloud Run, or other platforms with a custom mount path, use `file:/path/to/secret` or mount secrets at `/run/secrets/{name}` so `secret:name` applies.
 
 ### `literal:opaque`
-Returns everything after the first colon unchanged (e.g. `literal:http://host/path` → `http://host/path`). Required for any config value that contains `:` but is not a backend reference. Unknown prefixes raise **`BackendNotImplemented`**.
+Returns everything after the first colon unchanged (e.g. `literal:http://host/path` → `http://host/path`). Optional explicit marker for opaque values. By default, other colon-containing strings that are not registered backends (e.g. `http://host/path`, `team:name`) pass through unchanged. Call **`set_strict_prefix_dispatch(True)`** at startup to require a registered prefix or `literal:` for every value containing `:`.
 
 ### Encrypted field values (`$A256GCM$…`)
 Values use the wire form `$A256GCM$<uuid>$<base64(json)>$<base64(blob)>` where `<uuid>` is a canonical UUID string (segment 2). URL-safe base64 of a JSON object for per-algorithm parameters (currently `{}` for `A256GCM`), then URL-safe base64 of the ciphertext blob. Automatically decrypted using `secrets_resolver.set_keyctx_resolver` (separate from `EncryptedString.set_keyctx_resolver`).

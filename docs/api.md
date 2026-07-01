@@ -23,7 +23,7 @@ Applications that use encrypted columns **and** persisted keys usually wire thin
 3. **Persisted keys** — `set_kdf_params`, `set_kek_canary`, `put_keyrecord` (see [key-storage.md](key-storage.md)).
 4. **`EncryptedString.set_current_keyctx`** — active DEK for new writes.
 5. **`EncryptedString.set_keyctx_resolver`** — often `make_keyctx_resolver()` from `key_storage`.
-6. **Optional:** `secrets_resolver.set_keyctx_resolver` if config values use encrypted wires; `set_allowed_file_path_prefixes` for non-container `file:` paths.
+6. **Optional:** `secrets_resolver.set_keyctx_resolver` if config values use encrypted wires; `set_allowed_file_path_prefixes` for non-container `file:` paths; `set_strict_prefix_dispatch(True)` when every validated field is a secret reference and unknown prefixes should fail loud.
 
 For election-only or resolver-only apps, skip the steps that do not apply.
 
@@ -65,7 +65,7 @@ See [election.md](election.md) for protocol rules and limitations.
 
 ## Experimental secrets resolver
 
-**`resolve_secret`** is the single entry point for `env:`, `file:`, `secret:`, `literal:`, plugins, and encrypted wires. Register custom prefixes with **`register_backend`**; introspect with **`list_backends`**.
+**`resolve_secret`** is the single entry point for `env:`, `file:`, `secret:`, `literal:`, plugins, and encrypted wires. Unknown colon prefixes pass through by default; opt into strict dispatch with **`set_strict_prefix_dispatch`**. Register custom prefixes with **`register_backend`**; introspect with **`list_backends`**.
 
 Not a full secrets manager — see [secrets-resolver.md](secrets-resolver.md).
 
